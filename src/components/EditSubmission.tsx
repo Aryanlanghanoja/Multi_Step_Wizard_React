@@ -18,7 +18,7 @@ import {
 } from '@mui/icons-material';
 import type { FormData, FormErrors } from '../types';
 import { STEPS } from '../utils/constants';
-import { validateForm, validateStep } from '../utils/validation';
+import { validateForm, validateStep, validatePersonalInfo, validateWorkExperience } from '../utils/validation';
 import { getSubmissionById, updateSubmission } from '../services/indexedDB';
 import PersonalInfoStep from './steps/PersonalInfoStep';
 import EducationInfoStep from './steps/EducationInfoStep';
@@ -130,6 +130,22 @@ const EditSubmission = () => {
     });
   };
 
+  const handlePersonalInfoBlur = (field: string) => {
+    if (!formData) return;
+    // Re-validate the specific field on blur
+    const fieldErrors = validatePersonalInfo(formData.personalInfo);
+    // Only update if there's an error for this field
+    if (fieldErrors[field as keyof typeof fieldErrors]) {
+      setErrors(prev => ({
+        ...prev,
+        personalInfo: {
+          ...prev.personalInfo,
+          [field]: fieldErrors[field as keyof typeof fieldErrors],
+        },
+      }));
+    }
+  };
+
   const handleEducationChange = (section: string, field: string, value: string) => {
     setFormData(prev => {
       if (!prev) return null;
@@ -174,6 +190,22 @@ const EditSubmission = () => {
         },
       };
     });
+  };
+
+  const handleWorkExperienceBlur = (field: string) => {
+    if (!formData) return;
+    // Re-validate the specific field on blur
+    const fieldErrors = validateWorkExperience(formData.workExperience);
+    // Only update if there's an error for this field
+    if (fieldErrors[field as keyof typeof fieldErrors]) {
+      setErrors(prev => ({
+        ...prev,
+        workExperience: {
+          ...prev.workExperience,
+          [field]: fieldErrors[field as keyof typeof fieldErrors],
+        },
+      }));
+    }
   };
 
   const handleJobChange = (jobId: string, field: string, value: string) => {
@@ -227,6 +259,7 @@ const EditSubmission = () => {
             data={formData.personalInfo}
             errors={errors.personalInfo}
             onChange={handlePersonalInfoChange}
+            onBlur={handlePersonalInfoBlur}
           />
         );
       case 1:
@@ -247,6 +280,7 @@ const EditSubmission = () => {
             onJobChange={handleJobChange}
             onAddJob={handleAddJob}
             onRemoveJob={handleRemoveJob}
+            onBlur={handleWorkExperienceBlur}
           />
         );
       default:

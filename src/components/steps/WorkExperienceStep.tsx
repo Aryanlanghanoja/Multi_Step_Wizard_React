@@ -14,10 +14,28 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import type { WorkExperience, WorkExperienceErrors, JobEntry, JobType } from '../../types';
 import { JOB_TYPE_OPTIONS } from '../../utils/constants';
+
+dayjs.extend(customParseFormat);
+
+// Utility function to parse date in either YYYY-MM-DD or DD/MM/YYYY format
+const parseDate = (dateString: string): Dayjs | undefined => {
+  if (!dateString) return undefined;
+  // Try DD/MM/YYYY first (new format)
+  if (dayjs(dateString, 'DD/MM/YYYY', true).isValid()) {
+    return dayjs(dateString, 'DD/MM/YYYY');
+  }
+  // Fall back to YYYY-MM-DD (old format for existing data)
+  if (dayjs(dateString, 'YYYY-MM-DD', true).isValid()) {
+    return dayjs(dateString, 'YYYY-MM-DD');
+  }
+  // Try default parsing
+  return dayjs(dateString);
+};
 
 interface WorkExperienceStepProps {
   data: WorkExperience;
@@ -26,6 +44,7 @@ interface WorkExperienceStepProps {
   onJobChange: (jobId: string, field: keyof JobEntry, value: string) => void;
   onAddJob: () => void;
   onRemoveJob: (jobId: string) => void;
+  onBlur: (field: keyof WorkExperience) => void;
 }
 
 const WorkExperienceStep = ({
@@ -35,6 +54,7 @@ const WorkExperienceStep = ({
   onJobChange,
   onAddJob,
   onRemoveJob,
+  onBlur,
 }: WorkExperienceStepProps) => {
   const handleDateChange = (field: keyof WorkExperience, date: Dayjs | null) => {
     onChange(field, date ? date.format('DD/MM/YYYY') : '');
@@ -58,6 +78,7 @@ const WorkExperienceStep = ({
                 type="number"
                 value={data.totalExperience}
                 onChange={(e) => onChange('totalExperience', e.target.value)}
+                onBlur={() => onBlur('totalExperience')}
                 error={!!errors.totalExperience}
                 helperText={errors.totalExperience}
                 slotProps={{ htmlInput: { min: 0 } }}
@@ -101,9 +122,10 @@ const WorkExperienceStep = ({
               <Grid size={{ xs: 12, md: 6 }}>
                 <DatePicker
                   label="Start Date *"
-                  value={job.startDate ? dayjs(job.startDate, 'DD/MM/YYYY') : null}
+                  value={parseDate(job.startDate)}
                   onChange={(date) => handleJobDateChange(job.id, 'startDate', date)}
                   format="DD/MM/YYYY"
+                  onClose={() => onBlur('jobs')}
                   slotProps={{
                     textField: {
                       fullWidth: true,
@@ -117,10 +139,11 @@ const WorkExperienceStep = ({
               <Grid size={{ xs: 12, md: 6 }}>
                 <DatePicker
                   label="End Date *"
-                  value={job.endDate ? dayjs(job.endDate, 'DD/MM/YYYY') : null}
+                  value={parseDate(job.endDate)}
                   onChange={(date) => handleJobDateChange(job.id, 'endDate', date)}
-                  minDate={job.startDate ? dayjs(job.startDate, 'DD/MM/YYYY') : undefined}
+                  minDate={job.startDate ? parseDate(job.startDate) : undefined}
                   format="DD/MM/YYYY"
+                  onClose={() => onBlur('jobs')}
                   slotProps={{
                     textField: {
                       fullWidth: true,
@@ -138,6 +161,7 @@ const WorkExperienceStep = ({
                   required
                   value={job.designation}
                   onChange={(e) => onJobChange(job.id, 'designation', e.target.value)}
+                  onBlur={() => onBlur('jobs')}
                   error={!!errors.jobs?.[job.id]?.designation}
                   helperText={errors.jobs?.[job.id]?.designation}
                 />
@@ -148,6 +172,7 @@ const WorkExperienceStep = ({
                   options={JOB_TYPE_OPTIONS}
                   value={job.type || null}
                   onChange={(_, newValue) => onJobChange(job.id, 'type', (newValue as JobType) || '')}
+                  onOpen={() => onBlur('jobs')}
                   renderInput={(params) => (
                     <TextField
                       {...params}
@@ -155,6 +180,7 @@ const WorkExperienceStep = ({
                       required
                       error={!!errors.jobs?.[job.id]?.type}
                       helperText={errors.jobs?.[job.id]?.type}
+                      onBlur={() => onBlur('jobs')}
                     />
                   )}
                 />
@@ -169,6 +195,7 @@ const WorkExperienceStep = ({
                   required
                   value={job.description}
                   onChange={(e) => onJobChange(job.id, 'description', e.target.value)}
+                  onBlur={() => onBlur('jobs')}
                   error={!!errors.jobs?.[job.id]?.description}
                   helperText={errors.jobs?.[job.id]?.description}
                 />
@@ -200,6 +227,7 @@ const WorkExperienceStep = ({
                 required
                 value={data.currentCTC}
                 onChange={(e) => onChange('currentCTC', e.target.value)}
+                onBlur={() => onBlur('currentCTC')}
                 error={!!errors.currentCTC}
                 helperText={errors.currentCTC}
               />
@@ -214,6 +242,7 @@ const WorkExperienceStep = ({
                 required
                 value={data.expectedCTC}
                 onChange={(e) => onChange('expectedCTC', e.target.value)}
+                onBlur={() => onBlur('expectedCTC')}
                 error={!!errors.expectedCTC}
                 helperText={errors.expectedCTC}
               />
@@ -223,9 +252,10 @@ const WorkExperienceStep = ({
           <Grid size={{ xs: 12, md: 4 }}>
             <DatePicker
               label="Available From *"
-              value={data.availableFrom ? dayjs(data.availableFrom, 'DD/MM/YYYY') : null}
+              value={parseDate(data.availableFrom)}
               onChange={(date) => handleDateChange('availableFrom', date)}
               format="DD/MM/YYYY"
+              onClose={() => onBlur('availableFrom')}
               slotProps={{
                 textField: {
                   fullWidth: true,

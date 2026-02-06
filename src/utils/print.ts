@@ -1,4 +1,27 @@
 import type { FormData } from '../types';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+
+dayjs.extend(customParseFormat);
+
+// Utility function to parse date in either YYYY-MM-DD, DD/MM/YYYY, or ISO format
+const parseDateString = (dateString: string): dayjs.Dayjs | null => {
+  if (!dateString) return null;
+  // Try ISO format first (for createdAt/updatedAt fields)
+  if (dayjs(dateString).isValid() && dateString.includes('T')) {
+    return dayjs(dateString);
+  }
+  // Try DD/MM/YYYY first (new format)
+  if (dayjs(dateString, 'DD/MM/YYYY', true).isValid()) {
+    return dayjs(dateString, 'DD/MM/YYYY');
+  }
+  // Fall back to YYYY-MM-DD (old format for existing data)
+  if (dayjs(dateString, 'YYYY-MM-DD', true).isValid()) {
+    return dayjs(dateString, 'YYYY-MM-DD');
+  }
+  // Try default parsing
+  return dayjs(dateString);
+};
 
 export const printSubmission = (submission: FormData): void => {
   const printWindow = window.open('', '_blank');
@@ -9,12 +32,9 @@ export const printSubmission = (submission: FormData): void => {
 
   const formatDate = (dateString: string): string => {
     if (!dateString) return 'N/A';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-GB', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-    });
+    const parsed = parseDateString(dateString);
+    if (!parsed) return 'Invalid Date';
+    return parsed.format('DD/MM/YYYY');
   };
 
   const htmlContent = `

@@ -9,16 +9,35 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 import type { PersonalInfo, PersonalInfoErrors, CountryCode } from '../../types';
 import { COUNTRY_CODES } from '../../utils/constants';
+
+dayjs.extend(customParseFormat);
 
 interface PersonalInfoStepProps {
   data: PersonalInfo;
   errors: PersonalInfoErrors;
   onChange: (field: keyof PersonalInfo, value: string) => void;
+  onBlur: (field: keyof PersonalInfo) => void;
 }
 
-const PersonalInfoStep = ({ data, errors, onChange }: PersonalInfoStepProps) => {
+// Utility function to parse date in either YYYY-MM-DD or DD/MM/YYYY format
+const parseDate = (dateString: string): Dayjs | undefined => {
+  if (!dateString) return undefined;
+  // Try DD/MM/YYYY first (new format)
+  if (dayjs(dateString, 'DD/MM/YYYY', true).isValid()) {
+    return dayjs(dateString, 'DD/MM/YYYY');
+  }
+  // Fall back to YYYY-MM-DD (old format for existing data)
+  if (dayjs(dateString, 'YYYY-MM-DD', true).isValid()) {
+    return dayjs(dateString, 'YYYY-MM-DD');
+  }
+  // Try default parsing
+  return dayjs(dateString);
+};
+
+const PersonalInfoStep = ({ data, errors, onChange, onBlur }: PersonalInfoStepProps) => {
   const selectedCountry = COUNTRY_CODES.find((c) => c.phone === data.countryCode) || null;
 
   const handleDateChange = (date: Dayjs | null) => {
@@ -38,6 +57,7 @@ const PersonalInfoStep = ({ data, errors, onChange }: PersonalInfoStepProps) => 
                 required
                 value={data.firstName}
                 onChange={(e) => onChange('firstName', e.target.value)}
+                onBlur={() => onBlur('firstName')}
                 error={!!errors.firstName}
                 helperText={errors.firstName}
               />
@@ -52,6 +72,7 @@ const PersonalInfoStep = ({ data, errors, onChange }: PersonalInfoStepProps) => 
                 label="Middle Name"
                 value={data.middleName}
                 onChange={(e) => onChange('middleName', e.target.value)}
+                onBlur={() => onBlur('middleName')}
                 error={!!errors.middleName}
                 helperText={errors.middleName}
               />
@@ -67,6 +88,7 @@ const PersonalInfoStep = ({ data, errors, onChange }: PersonalInfoStepProps) => 
                 required
                 value={data.lastName}
                 onChange={(e) => onChange('lastName', e.target.value)}
+                onBlur={() => onBlur('lastName')}
                 error={!!errors.lastName}
                 helperText={errors.lastName}
               />
@@ -82,6 +104,12 @@ const PersonalInfoStep = ({ data, errors, onChange }: PersonalInfoStepProps) => 
               onChange={(_, newValue) => {
                 onChange('countryCode', newValue?.phone || '');
               }}
+              onOpen={() => {
+                // Validate country code when autocomplete is opened
+                if (!data.countryCode) {
+                  onBlur('countryCode');
+                }
+              }}
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -89,6 +117,7 @@ const PersonalInfoStep = ({ data, errors, onChange }: PersonalInfoStepProps) => 
                   required
                   error={!!errors.countryCode}
                   helperText={errors.countryCode}
+                  onBlur={() => onBlur('countryCode')}
                 />
               )}
             />
@@ -103,6 +132,7 @@ const PersonalInfoStep = ({ data, errors, onChange }: PersonalInfoStepProps) => 
                 required
                 value={data.phoneNumber}
                 onChange={(e) => onChange('phoneNumber', e.target.value)}
+                onBlur={() => onBlur('phoneNumber')}
                 error={!!errors.phoneNumber}
                 helperText={errors.phoneNumber}
                 slotProps={{
@@ -126,6 +156,7 @@ const PersonalInfoStep = ({ data, errors, onChange }: PersonalInfoStepProps) => 
                 required
                 value={data.email}
                 onChange={(e) => onChange('email', e.target.value)}
+                onBlur={() => onBlur('email')}
                 error={!!errors.email}
                 helperText={errors.email}
               />
@@ -136,10 +167,11 @@ const PersonalInfoStep = ({ data, errors, onChange }: PersonalInfoStepProps) => 
           <Grid size={{ xs: 12, md: 6 }}>
             <DatePicker
               label="Date of Birth *"
-              value={data.dateOfBirth ? dayjs(data.dateOfBirth, 'DD/MM/YYYY') : null}
+              value={parseDate(data.dateOfBirth)}
               onChange={handleDateChange}
               maxDate={dayjs()}
               format="DD/MM/YYYY"
+              onClose={() => onBlur('dateOfBirth')}
               slotProps={{
                 textField: {
                   fullWidth: true,
