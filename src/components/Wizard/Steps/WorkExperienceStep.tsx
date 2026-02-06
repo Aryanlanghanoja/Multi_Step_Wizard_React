@@ -1,14 +1,11 @@
 import {
   Box,
   Grid,
-  TextField,
-  Autocomplete,
   Typography,
   Button,
   IconButton,
   Paper,
   Divider,
-  Tooltip,
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -17,10 +14,22 @@ import dayjs, { Dayjs } from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
-import type { WorkExperience, WorkExperienceErrors, JobEntry, JobType } from '../../../types';
+import type { WorkExperience, WorkExperienceErrors, JobEntry } from '../../../types';
 import { JOB_TYPE_OPTIONS } from '../../../utils/constants';
+import InputField from '../../InputField/InputField';
+import SelectField from '../../InputField/SelectField';
 
 dayjs.extend(customParseFormat);
+
+interface WorkExperienceStepProps {
+  data: WorkExperience;
+  errors: WorkExperienceErrors;
+  onChange: (field: keyof WorkExperience, value: string) => void;
+  onJobChange: (jobId: string, field: keyof JobEntry, value: string) => void;
+  onAddJob: () => void;
+  onRemoveJob: (jobId: string) => void;
+  onBlur: (field: keyof WorkExperience) => void;
+}
 
 // Utility function to parse date in either YYYY-MM-DD or DD/MM/YYYY format
 const parseDate = (dateString: string): Dayjs | undefined => {
@@ -36,16 +45,6 @@ const parseDate = (dateString: string): Dayjs | undefined => {
   // Try default parsing
   return dayjs(dateString);
 };
-
-interface WorkExperienceStepProps {
-  data: WorkExperience;
-  errors: WorkExperienceErrors;
-  onChange: (field: keyof WorkExperience, value: string) => void;
-  onJobChange: (jobId: string, field: keyof JobEntry, value: string) => void;
-  onAddJob: () => void;
-  onRemoveJob: (jobId: string) => void;
-  onBlur: (field: keyof WorkExperience) => void;
-}
 
 const WorkExperienceStep = ({
   data,
@@ -64,26 +63,28 @@ const WorkExperienceStep = ({
     onJobChange(jobId, field, date ? date.format('DD/MM/YYYY') : '');
   };
 
+  // Validation pattern for numeric values
+  const numericOnlyPattern = /^\d*\.?\d*$/;
+
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Box sx={{ mt: 2 }}>
         {/* Total Experience */}
         <Grid container spacing={3}>
           <Grid size={{ xs: 12, md: 6 }}>
-            <Tooltip title="Enter total years of experience" arrow placement="top">
-              <TextField
-                fullWidth
-                label="Total Experience (Years)"
-                required
-                type="number"
-                value={data.totalExperience}
-                onChange={(e) => onChange('totalExperience', e.target.value)}
-                onBlur={() => onBlur('totalExperience')}
-                error={!!errors.totalExperience}
-                helperText={errors.totalExperience}
-                slotProps={{ htmlInput: { min: 0 } }}
-              />
-            </Tooltip>
+            <InputField
+              label="Total Experience (Years)"
+              value={data.totalExperience}
+              onChange={(value) => onChange('totalExperience', value)}
+              onBlur={() => onBlur('totalExperience')}
+              error={errors.totalExperience}
+              required
+              type="number"
+              tooltip="Enter total years of experience"
+              validateOnChange
+              validationPattern={numericOnlyPattern}
+              slotProps={{ htmlInput: { min: 0 } }}
+            />
           </Grid>
         </Grid>
 
@@ -155,49 +156,38 @@ const WorkExperienceStep = ({
               </Grid>
 
               <Grid size={{ xs: 12, md: 6 }}>
-                <TextField
-                  fullWidth
+                <InputField
                   label="Designation"
-                  required
                   value={job.designation}
-                  onChange={(e) => onJobChange(job.id, 'designation', e.target.value)}
+                  onChange={(value) => onJobChange(job.id, 'designation', value)}
                   onBlur={() => onBlur('jobs')}
-                  error={!!errors.jobs?.[job.id]?.designation}
-                  helperText={errors.jobs?.[job.id]?.designation}
+                  error={errors.jobs?.[job.id]?.designation}
+                  required
                 />
               </Grid>
 
               <Grid size={{ xs: 12, md: 6 }}>
-                <Autocomplete
-                  options={JOB_TYPE_OPTIONS}
+                <SelectField
+                  label="Job Type"
+                  options={JOB_TYPE_OPTIONS.map(opt => ({ label: opt, value: opt }))}
                   value={job.type || null}
-                  onChange={(_, newValue) => onJobChange(job.id, 'type', (newValue as JobType) || '')}
-                  onOpen={() => onBlur('jobs')}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Job Type"
-                      required
-                      error={!!errors.jobs?.[job.id]?.type}
-                      helperText={errors.jobs?.[job.id]?.type}
-                      onBlur={() => onBlur('jobs')}
-                    />
-                  )}
+                  onChange={(value) => onJobChange(job.id, 'type', value)}
+                  error={errors.jobs?.[job.id]?.type}
+                  required
+                  onBlur={() => onBlur('jobs')}
                 />
               </Grid>
 
               <Grid size={{ xs: 12 }}>
-                <TextField
-                  fullWidth
+                <InputField
+                  label="Description"
+                  value={job.description}
+                  onChange={(value) => onJobChange(job.id, 'description', value)}
+                  onBlur={() => onBlur('jobs')}
+                  error={errors.jobs?.[job.id]?.description}
+                  required
                   multiline
                   rows={3}
-                  label="Description"
-                  required
-                  value={job.description}
-                  onChange={(e) => onJobChange(job.id, 'description', e.target.value)}
-                  onBlur={() => onBlur('jobs')}
-                  error={!!errors.jobs?.[job.id]?.description}
-                  helperText={errors.jobs?.[job.id]?.description}
                 />
               </Grid>
             </Grid>
@@ -220,33 +210,31 @@ const WorkExperienceStep = ({
         </Typography>
         <Grid container spacing={3}>
           <Grid size={{ xs: 12, md: 4 }}>
-            <Tooltip title="Enter your current CTC in LPA" arrow placement="top">
-              <TextField
-                fullWidth
-                label="Current CTC (LPA)"
-                required
-                value={data.currentCTC}
-                onChange={(e) => onChange('currentCTC', e.target.value)}
-                onBlur={() => onBlur('currentCTC')}
-                error={!!errors.currentCTC}
-                helperText={errors.currentCTC}
-              />
-            </Tooltip>
+            <InputField
+              label="Current CTC (LPA)"
+              value={data.currentCTC}
+              onChange={(value) => onChange('currentCTC', value)}
+              onBlur={() => onBlur('currentCTC')}
+              error={errors.currentCTC}
+              required
+              tooltip="Enter your current CTC in LPA"
+              validateOnChange
+              validationPattern={numericOnlyPattern}
+            />
           </Grid>
 
           <Grid size={{ xs: 12, md: 4 }}>
-            <Tooltip title="Enter your expected CTC in LPA" arrow placement="top">
-              <TextField
-                fullWidth
-                label="Expected CTC (LPA)"
-                required
-                value={data.expectedCTC}
-                onChange={(e) => onChange('expectedCTC', e.target.value)}
-                onBlur={() => onBlur('expectedCTC')}
-                error={!!errors.expectedCTC}
-                helperText={errors.expectedCTC}
-              />
-            </Tooltip>
+            <InputField
+              label="Expected CTC (LPA)"
+              value={data.expectedCTC}
+              onChange={(value) => onChange('expectedCTC', value)}
+              onBlur={() => onBlur('expectedCTC')}
+              error={errors.expectedCTC}
+              required
+              tooltip="Enter your expected CTC in LPA"
+              validateOnChange
+              validationPattern={numericOnlyPattern}
+            />
           </Grid>
 
           <Grid size={{ xs: 12, md: 4 }}>
@@ -272,3 +260,4 @@ const WorkExperienceStep = ({
 };
 
 export default WorkExperienceStep;
+

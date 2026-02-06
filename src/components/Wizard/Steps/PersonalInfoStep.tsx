@@ -1,17 +1,13 @@
-import {
-  Box,
-  Grid,
-  TextField,
-  Autocomplete,
-  Tooltip,
-} from '@mui/material';
+import { Box, Grid } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
-import type { PersonalInfo, PersonalInfoErrors, CountryCode } from '../../../types';
+import type { PersonalInfo, PersonalInfoErrors } from '../../../types';
 import { COUNTRY_CODES } from '../../../utils/constants';
+import InputField from '../../InputField/InputField';
+import SelectField from '../../InputField/SelectField';
 
 dayjs.extend(customParseFormat);
 
@@ -38,7 +34,9 @@ const parseDate = (dateString: string): Dayjs | undefined => {
 };
 
 const PersonalInfoStep = ({ data, errors, onChange, onBlur }: PersonalInfoStepProps) => {
-  const selectedCountry = COUNTRY_CODES.find((c) => c.phone === data.countryCode) || null;
+  // Validation patterns
+  const alphaOnlyPattern = /^[a-zA-Z\s]*$/;
+  const numericOnlyPattern = /^\d*$/;
 
   const handleDateChange = (date: Dayjs | null) => {
     onChange('dateOfBirth', date ? date.format('DD/MM/YYYY') : '');
@@ -50,117 +48,96 @@ const PersonalInfoStep = ({ data, errors, onChange, onBlur }: PersonalInfoStepPr
         <Grid container spacing={3}>
           {/* First Name */}
           <Grid size={{ xs: 12, md: 4 }}>
-            <Tooltip title="Enter your first name (alphabets only)" arrow placement="top">
-              <TextField
-                fullWidth
-                label="First Name"
-                required
-                value={data.firstName}
-                onChange={(e) => onChange('firstName', e.target.value)}
-                onBlur={() => onBlur('firstName')}
-                error={!!errors.firstName}
-                helperText={errors.firstName}
-              />
-            </Tooltip>
+            <InputField
+              label="First Name"
+              value={data.firstName}
+              onChange={(value) => onChange('firstName', value)}
+              onBlur={() => onBlur('firstName')}
+              error={errors.firstName}
+              required
+              tooltip="Enter your first name (alphabets only)"
+              validateOnChange
+              validationPattern={alphaOnlyPattern}
+            />
           </Grid>
 
           {/* Middle Name */}
           <Grid size={{ xs: 12, md: 4 }}>
-            <Tooltip title="Enter your middle name (optional)" arrow placement="top">
-              <TextField
-                fullWidth
-                label="Middle Name"
-                value={data.middleName}
-                onChange={(e) => onChange('middleName', e.target.value)}
-                onBlur={() => onBlur('middleName')}
-                error={!!errors.middleName}
-                helperText={errors.middleName}
-              />
-            </Tooltip>
+            <InputField
+              label="Middle Name"
+              value={data.middleName}
+              onChange={(value) => onChange('middleName', value)}
+              onBlur={() => onBlur('middleName')}
+              error={errors.middleName}
+              tooltip="Enter your middle name (optional)"
+              validateOnChange
+              validationPattern={alphaOnlyPattern}
+            />
           </Grid>
 
           {/* Last Name */}
           <Grid size={{ xs: 12, md: 4 }}>
-            <Tooltip title="Enter your last name (alphabets only)" arrow placement="top">
-              <TextField
-                fullWidth
-                label="Last Name"
-                required
-                value={data.lastName}
-                onChange={(e) => onChange('lastName', e.target.value)}
-                onBlur={() => onBlur('lastName')}
-                error={!!errors.lastName}
-                helperText={errors.lastName}
-              />
-            </Tooltip>
+            <InputField
+              label="Last Name"
+              value={data.lastName}
+              onChange={(value) => onChange('lastName', value)}
+              onBlur={() => onBlur('lastName')}
+              error={errors.lastName}
+              required
+              tooltip="Enter your last name (alphabets only)"
+              validateOnChange
+              validationPattern={alphaOnlyPattern}
+            />
           </Grid>
 
           {/* Country Code */}
           <Grid size={{ xs: 12, md: 4 }}>
-            <Autocomplete
-              options={COUNTRY_CODES}
-              getOptionLabel={(option: CountryCode) => `${option.label} (${option.phone})`}
-              value={selectedCountry}
-              onChange={(_, newValue) => {
-                onChange('countryCode', newValue?.phone || '');
-              }}
-              onOpen={() => {
-                // Validate country code when autocomplete is opened
-                if (!data.countryCode) {
-                  onBlur('countryCode');
-                }
-              }}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Country Code"
-                  required
-                  error={!!errors.countryCode}
-                  helperText={errors.countryCode}
-                  onBlur={() => onBlur('countryCode')}
-                />
-              )}
+            <SelectField
+              label="Country Code"
+              options={COUNTRY_CODES.map(cc => ({ label: `${cc.label} (${cc.phone})`, value: cc.phone }))}
+              value={data.countryCode}
+              onChange={(value) => onChange('countryCode', value)}
+              error={errors.countryCode}
+              required
+              onBlur={() => onBlur('countryCode')}
             />
           </Grid>
 
           {/* Phone Number */}
           <Grid size={{ xs: 12, md: 8 }}>
-            <Tooltip title="Enter phone number (digits only, 7-15 characters)" arrow placement="top">
-              <TextField
-                fullWidth
-                label="Phone Number"
-                required
-                value={data.phoneNumber}
-                onChange={(e) => onChange('phoneNumber', e.target.value)}
-                onBlur={() => onBlur('phoneNumber')}
-                error={!!errors.phoneNumber}
-                helperText={errors.phoneNumber}
-                slotProps={{
-                  input: {
-                    startAdornment: data.countryCode ? (
-                      <Box sx={{ mr: 1, color: 'text.secondary' }}>{data.countryCode}</Box>
-                    ) : null,
-                  },
-                }}
-              />
-            </Tooltip>
+            <InputField
+              label="Phone Number"
+              value={data.phoneNumber}
+              onChange={(value) => onChange('phoneNumber', value)}
+              onBlur={() => onBlur('phoneNumber')}
+              error={errors.phoneNumber}
+              required
+              tooltip="Enter phone number (digits only, 7-15 characters)"
+              validateOnChange
+              validationPattern={numericOnlyPattern}
+              slotProps={{
+                input: {
+                  startAdornment: data.countryCode ? (
+                    <Box sx={{ mr: 1, color: 'text.secondary' }}>{data.countryCode}</Box>
+                  ) : null,
+                },
+              }}
+            />
           </Grid>
 
           {/* Email */}
           <Grid size={{ xs: 12, md: 6 }}>
-            <Tooltip title="Enter a valid email address" arrow placement="top">
-              <TextField
-                fullWidth
-                label="Email Address"
-                type="email"
-                required
-                value={data.email}
-                onChange={(e) => onChange('email', e.target.value)}
-                onBlur={() => onBlur('email')}
-                error={!!errors.email}
-                helperText={errors.email}
-              />
-            </Tooltip>
+            <InputField
+              label="Email Address"
+              type="email"
+              value={data.email}
+              onChange={(value) => onChange('email', value)}
+              onBlur={() => onBlur('email')}
+              error={errors.email}
+              required
+              tooltip="Enter a valid email address"
+              validateOnChange
+            />
           </Grid>
 
           {/* Date of Birth */}
@@ -188,3 +165,4 @@ const PersonalInfoStep = ({ data, errors, onChange, onBlur }: PersonalInfoStepPr
 };
 
 export default PersonalInfoStep;
+

@@ -1,8 +1,6 @@
 import {
   Box,
   Grid,
-  TextField,
-  Autocomplete,
   RadioGroup,
   FormControlLabel,
   Radio,
@@ -11,8 +9,10 @@ import {
   Typography,
   Divider,
 } from '@mui/material';
-import type { EducationInfo, EducationInfoErrors, EducationType, BoardType } from '../../../types';
+import type { EducationInfo, EducationInfoErrors, EducationType } from '../../../types';
 import { BOARD_OPTIONS, YEAR_OPTIONS, DEGREE_OPTIONS } from '../../../utils/constants';
+import InputField from '../../InputField/InputField';
+import SelectField from '../../InputField/SelectField';
 
 interface EducationInfoStepProps {
   data: EducationInfo;
@@ -35,35 +35,23 @@ const EducationInfoStep = ({
       </Typography>
       <Grid container spacing={3}>
         <Grid size={{ xs: 12, md: 6 }}>
-          <Autocomplete
-            options={YEAR_OPTIONS}
+          <SelectField
+            label="Pass Year"
+            options={YEAR_OPTIONS.map(opt => ({ label: opt, value: opt }))}
             value={data.tenth.passYear || null}
-            onChange={(_, newValue) => onChange('tenth', 'passYear', newValue || '')}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Pass Year"
-                required
-                error={!!errors.tenth?.passYear}
-                helperText={errors.tenth?.passYear}
-              />
-            )}
+            onChange={(value) => onChange('tenth', 'passYear', value)}
+            error={errors.tenth?.passYear}
+            required
           />
         </Grid>
         <Grid size={{ xs: 12, md: 6 }}>
-          <Autocomplete
-            options={BOARD_OPTIONS}
+          <SelectField
+            label="Board"
+            options={BOARD_OPTIONS.map(opt => ({ label: opt, value: opt }))}
             value={data.tenth.board || null}
-            onChange={(_, newValue) => onChange('tenth', 'board', (newValue as BoardType) || '')}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Board"
-                required
-                error={!!errors.tenth?.board}
-                helperText={errors.tenth?.board}
-              />
-            )}
+            onChange={(value) => onChange('tenth', 'board', value)}
+            error={errors.tenth?.board}
+            required
           />
         </Grid>
       </Grid>
@@ -91,35 +79,23 @@ const EducationInfoStep = ({
           </Typography>
           <Grid container spacing={3}>
             <Grid size={{ xs: 12, md: 6 }}>
-              <Autocomplete
-                options={YEAR_OPTIONS}
+              <SelectField
+                label="Pass Year"
+                options={YEAR_OPTIONS.map(opt => ({ label: opt, value: opt }))}
                 value={data.twelfth.passYear || null}
-                onChange={(_, newValue) => onChange('twelfth', 'passYear', newValue || '')}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Pass Year"
-                    required
-                    error={!!errors.twelfth?.passYear}
-                    helperText={errors.twelfth?.passYear}
-                  />
-                )}
+                onChange={(value) => onChange('twelfth', 'passYear', value)}
+                error={errors.twelfth?.passYear}
+                required
               />
             </Grid>
             <Grid size={{ xs: 12, md: 6 }}>
-              <Autocomplete
-                options={BOARD_OPTIONS}
+              <SelectField
+                label="Board"
+                options={BOARD_OPTIONS.map(opt => ({ label: opt, value: opt }))}
                 value={data.twelfth.board || null}
-                onChange={(_, newValue) => onChange('twelfth', 'board', (newValue as BoardType) || '')}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Board"
-                    required
-                    error={!!errors.twelfth?.board}
-                    helperText={errors.twelfth?.board}
-                  />
-                )}
+                onChange={(value) => onChange('twelfth', 'board', value)}
+                error={errors.twelfth?.board}
+                required
               />
             </Grid>
           </Grid>
@@ -134,41 +110,31 @@ const EducationInfoStep = ({
           </Typography>
           <Grid container spacing={3}>
             <Grid size={{ xs: 12, md: 4 }}>
-              <Autocomplete
-                options={YEAR_OPTIONS}
+              <SelectField
+                label="Passing Year"
+                options={YEAR_OPTIONS.map(opt => ({ label: opt, value: opt }))}
                 value={data.diploma.passYear || null}
-                onChange={(_, newValue) => onChange('diploma', 'passYear', newValue || '')}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Passing Year"
-                    required
-                    error={!!errors.diploma?.passYear}
-                    helperText={errors.diploma?.passYear}
-                  />
-                )}
+                onChange={(value) => onChange('diploma', 'passYear', value)}
+                error={errors.diploma?.passYear}
+                required
               />
             </Grid>
             <Grid size={{ xs: 12, md: 4 }}>
-              <TextField
-                fullWidth
+              <InputField
                 label="Organization"
-                required
                 value={data.diploma.organization}
-                onChange={(e) => onChange('diploma', 'organization', e.target.value)}
-                error={!!errors.diploma?.organization}
-                helperText={errors.diploma?.organization}
+                onChange={(value) => onChange('diploma', 'organization', value)}
+                error={errors.diploma?.organization}
+                required
               />
             </Grid>
             <Grid size={{ xs: 12, md: 4 }}>
-              <TextField
-                fullWidth
+              <InputField
                 label="Major"
-                required
                 value={data.diploma.major}
-                onChange={(e) => onChange('diploma', 'major', e.target.value)}
-                error={!!errors.diploma?.major}
-                helperText={errors.diploma?.major}
+                onChange={(value) => onChange('diploma', 'major', value)}
+                error={errors.diploma?.major}
+                required
               />
             </Grid>
           </Grid>
@@ -183,57 +149,41 @@ const EducationInfoStep = ({
       </Typography>
       <Grid container spacing={3}>
         <Grid size={{ xs: 12, md: 6 }}>
-          <Autocomplete
-            options={YEAR_OPTIONS}
+          <SelectField
+            label="Completion Year"
+            options={YEAR_OPTIONS.map(opt => ({ label: opt, value: opt }))}
             value={data.graduation.completionYear || null}
-            onChange={(_, newValue) => onChange('graduation', 'completionYear', newValue || '')}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Completion Year"
-                required
-                error={!!errors.graduation?.completionYear}
-                helperText={errors.graduation?.completionYear}
-              />
-            )}
+            onChange={(value) => onChange('graduation', 'completionYear', value)}
+            error={errors.graduation?.completionYear}
+            required
           />
         </Grid>
         <Grid size={{ xs: 12, md: 6 }}>
-          <TextField
-            fullWidth
+          <InputField
             label="Organization / University"
-            required
             value={data.graduation.organization}
-            onChange={(e) => onChange('graduation', 'organization', e.target.value)}
-            error={!!errors.graduation?.organization}
-            helperText={errors.graduation?.organization}
-          />
-        </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
-          <Autocomplete
-            options={DEGREE_OPTIONS}
-            value={data.graduation.degree || null}
-            onChange={(_, newValue) => onChange('graduation', 'degree', newValue || '')}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Degree"
-                required
-                error={!!errors.graduation?.degree}
-                helperText={errors.graduation?.degree}
-              />
-            )}
-          />
-        </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
-          <TextField
-            fullWidth
-            label="Major / Specialization"
+            onChange={(value) => onChange('graduation', 'organization', value)}
+            error={errors.graduation?.organization}
             required
+          />
+        </Grid>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <SelectField
+            label="Degree"
+            options={DEGREE_OPTIONS.map(opt => ({ label: opt, value: opt }))}
+            value={data.graduation.degree || null}
+            onChange={(value) => onChange('graduation', 'degree', value)}
+            error={errors.graduation?.degree}
+            required
+          />
+        </Grid>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <InputField
+            label="Major / Specialization"
             value={data.graduation.major}
-            onChange={(e) => onChange('graduation', 'major', e.target.value)}
-            error={!!errors.graduation?.major}
-            helperText={errors.graduation?.major}
+            onChange={(value) => onChange('graduation', 'major', value)}
+            error={errors.graduation?.major}
+            required
           />
         </Grid>
       </Grid>
@@ -242,3 +192,4 @@ const EducationInfoStep = ({
 };
 
 export default EducationInfoStep;
+

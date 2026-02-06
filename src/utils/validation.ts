@@ -11,40 +11,33 @@ import type {
   FormErrors,
 } from '../types';
 
-// Regex patterns
 const ALPHA_ONLY = /^[a-zA-Z\s]*$/;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const NUMERIC_ONLY = /^\d*$/;
 
-// Validate Personal Information
 export const validatePersonalInfo = (data: PersonalInfo): PersonalInfoErrors => {
   const errors: PersonalInfoErrors = {};
 
-  // First Name
   if (!data.firstName.trim()) {
     errors.firstName = 'First name is required';
   } else if (!ALPHA_ONLY.test(data.firstName)) {
     errors.firstName = 'First name should contain only alphabets';
   }
 
-  // Middle Name (optional but must be alphabets if provided)
   if (data.middleName && !ALPHA_ONLY.test(data.middleName)) {
     errors.middleName = 'Middle name should contain only alphabets';
   }
 
-  // Last Name
   if (!data.lastName.trim()) {
     errors.lastName = 'Last name is required';
   } else if (!ALPHA_ONLY.test(data.lastName)) {
     errors.lastName = 'Last name should contain only alphabets';
   }
 
-  // Country Code
   if (!data.countryCode) {
     errors.countryCode = 'Country code is required';
   }
 
-  // Phone Number
   if (!data.phoneNumber.trim()) {
     errors.phoneNumber = 'Phone number is required';
   } else if (!NUMERIC_ONLY.test(data.phoneNumber)) {
@@ -53,14 +46,12 @@ export const validatePersonalInfo = (data: PersonalInfo): PersonalInfoErrors => 
     errors.phoneNumber = 'Phone number should be 7-15 digits';
   }
 
-  // Email
   if (!data.email.trim()) {
     errors.email = 'Email is required';
   } else if (!EMAIL_REGEX.test(data.email)) {
     errors.email = 'Please enter a valid email address';
   }
 
-  // Date of Birth
   if (!data.dateOfBirth) {
     errors.dateOfBirth = 'Date of birth is required';
   } else {
@@ -74,27 +65,29 @@ export const validatePersonalInfo = (data: PersonalInfo): PersonalInfoErrors => 
   return errors;
 };
 
-// Validate Education Information
 export const validateEducationInfo = (data: EducationInfo): EducationInfoErrors => {
   const errors: EducationInfoErrors = {};
 
-  // 10th Details
   if (!data.tenth.passYear) {
     errors.tenth = { ...errors.tenth, passYear: '10th pass year is required' };
   }
+
   if (!data.tenth.board) {
     errors.tenth = { ...errors.tenth, board: '10th board is required' };
   }
 
-  // 12th or Diploma based on selection
   if (data.educationType === '12th') {
     if (!data.twelfth.passYear) {
       errors.twelfth = { ...errors.twelfth, passYear: '12th pass year is required' };
     }
+
     if (!data.twelfth.board) {
       errors.twelfth = { ...errors.twelfth, board: '12th board is required' };
     }
-  } else if (data.educationType === 'diploma') {
+
+  } 
+  
+  else if (data.educationType === 'diploma') {
     if (!data.diploma.passYear) {
       errors.diploma = { ...errors.diploma, passYear: 'Diploma pass year is required' };
     }
@@ -106,7 +99,6 @@ export const validateEducationInfo = (data: EducationInfo): EducationInfoErrors 
     }
   }
 
-  // Graduation Details
   if (!data.graduation.completionYear) {
     errors.graduation = { ...errors.graduation, completionYear: 'Graduation year is required' };
   }
@@ -123,7 +115,6 @@ export const validateEducationInfo = (data: EducationInfo): EducationInfoErrors 
   return errors;
 };
 
-// Validate single job entry
 export const validateJobEntry = (job: JobEntry): JobEntryErrors => {
   const errors: JobEntryErrors = {};
 
@@ -158,11 +149,9 @@ export const validateJobEntry = (job: JobEntry): JobEntryErrors => {
   return errors;
 };
 
-// Validate Work Experience
 export const validateWorkExperience = (data: WorkExperience): WorkExperienceErrors => {
   const errors: WorkExperienceErrors = {};
 
-  // Total Experience
   if (!data.totalExperience) {
     errors.totalExperience = 'Total experience is required';
   } else if (!NUMERIC_ONLY.test(data.totalExperience)) {
@@ -171,7 +160,6 @@ export const validateWorkExperience = (data: WorkExperience): WorkExperienceErro
     errors.totalExperience = 'Experience cannot be negative';
   }
 
-  // Job Entries
   if (data.jobs.length > 0) {
     const jobErrors: { [key: string]: JobEntryErrors } = {};
     data.jobs.forEach((job) => {
@@ -185,21 +173,18 @@ export const validateWorkExperience = (data: WorkExperience): WorkExperienceErro
     }
   }
 
-  // Current CTC
   if (!data.currentCTC) {
     errors.currentCTC = 'Current CTC is required';
   } else if (!NUMERIC_ONLY.test(data.currentCTC.replace(/\./g, ''))) {
     errors.currentCTC = 'CTC should be numeric';
   }
 
-  // Expected CTC
   if (!data.expectedCTC) {
     errors.expectedCTC = 'Expected CTC is required';
   } else if (!NUMERIC_ONLY.test(data.expectedCTC.replace(/\./g, ''))) {
     errors.expectedCTC = 'CTC should be numeric';
   }
 
-  // Available From
   if (!data.availableFrom) {
     errors.availableFrom = 'Available from date is required';
   }
@@ -207,7 +192,6 @@ export const validateWorkExperience = (data: WorkExperience): WorkExperienceErro
   return errors;
 };
 
-// Check if step has errors
 export const isPersonalInfoValid = (errors: PersonalInfoErrors): boolean => {
   return Object.keys(errors).length === 0;
 };
@@ -220,7 +204,6 @@ export const isWorkExperienceValid = (errors: WorkExperienceErrors): boolean => 
   return Object.keys(errors).length === 0;
 };
 
-// Validate entire form
 export const validateForm = (data: FormData): FormErrors => {
   return {
     personalInfo: validatePersonalInfo(data.personalInfo),
@@ -229,7 +212,6 @@ export const validateForm = (data: FormData): FormErrors => {
   };
 };
 
-// Validate specific step
 export const validateStep = (stepIndex: number, data: FormData): PersonalInfoErrors | EducationInfoErrors | WorkExperienceErrors => {
   switch (stepIndex) {
     case 0:
