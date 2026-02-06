@@ -1,23 +1,23 @@
 import type { FormData } from '../types';
 
 export const printSubmission = (submission: FormData): void => {
-    const printWindow = window.open('', '_blank');
-    if (!printWindow) {
-        alert('Please allow popups to print the form');
-        return;
-    }
+  const printWindow = window.open('', '_blank');
+  if (!printWindow) {
+    alert('Please allow popups to print the form');
+    return;
+  }
 
-    const formatDate = (dateString: string): string => {
-        if (!dateString) return 'N/A';
-        const date = new Date(dateString);
-        return date.toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-        });
-    };
+  const formatDate = (dateString: string): string => {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-GB', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    });
+  };
 
-    const htmlContent = `
+  const htmlContent = `
     <!DOCTYPE html>
     <html>
     <head>
@@ -314,6 +314,6 @@ export const printSubmission = (submission: FormData): void => {
     </html>
   `;
 
-    printWindow.document.write(htmlContent);
-    printWindow.document.close();
+  printWindow.document.write(htmlContent);
+  printWindow.document.close();
 };

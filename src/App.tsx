@@ -10,14 +10,14 @@ import './App.module.css';
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#1976d2',
+       main: '#1976d2',
     },
     secondary: {
       main: '#dc004e',
     },
   },
   typography: {
-    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+    fontFamily: '"Poppins", "Helvetica", "Arial", sans-serif',
   },
 });
 

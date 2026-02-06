@@ -38,11 +38,11 @@ const WorkExperienceStep = ({
   onRemoveJob,
 }: WorkExperienceStepProps) => {
   const handleDateChange = (field: keyof WorkExperience, date: Dayjs | null) => {
-    onChange(field, date ? date.format('YYYY-MM-DD') : '');
+    onChange(field, date ? date.format('DD/MM/YYYY') : '');
   };
 
   const handleJobDateChange = (jobId: string, field: 'startDate' | 'endDate', date: Dayjs | null) => {
-    onJobChange(jobId, field, date ? date.format('YYYY-MM-DD') : '');
+    onJobChange(jobId, field, date ? date.format('DD/MM/YYYY') : '');
   };
 
   return (
@@ -102,8 +102,9 @@ const WorkExperienceStep = ({
               <Grid size={{ xs: 12, md: 6 }}>
                 <DatePicker
                   label="Start Date *"
-                  value={job.startDate ? dayjs(job.startDate) : null}
+                  value={job.startDate ? dayjs(job.startDate, 'DD/MM/YYYY') : null}
                   onChange={(date) => handleJobDateChange(job.id, 'startDate', date)}
+                  format="DD/MM/YYYY"
                   slotProps={{
                     textField: {
                       fullWidth: true,
@@ -117,9 +118,10 @@ const WorkExperienceStep = ({
               <Grid size={{ xs: 12, md: 6 }}>
                 <DatePicker
                   label="End Date *"
-                  value={job.endDate ? dayjs(job.endDate) : null}
+                  value={job.endDate ? dayjs(job.endDate, 'DD/MM/YYYY') : null}
                   onChange={(date) => handleJobDateChange(job.id, 'endDate', date)}
-                  minDate={job.startDate ? dayjs(job.startDate) : undefined}
+                  minDate={job.startDate ? dayjs(job.startDate, 'DD/MM/YYYY') : undefined}
+                  format="DD/MM/YYYY"
                   slotProps={{
                     textField: {
                       fullWidth: true,
@@ -222,8 +224,9 @@ const WorkExperienceStep = ({
           <Grid size={{ xs: 12, md: 4 }}>
             <DatePicker
               label="Available From *"
-              value={data.availableFrom ? dayjs(data.availableFrom) : null}
+              value={data.availableFrom ? dayjs(data.availableFrom, 'DD/MM/YYYY') : null}
               onChange={(date) => handleDateChange('availableFrom', date)}
+              format="DD/MM/YYYY"
               slotProps={{
                 textField: {
                   fullWidth: true,

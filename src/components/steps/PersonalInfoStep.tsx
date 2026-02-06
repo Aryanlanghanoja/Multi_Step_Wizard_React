@@ -22,7 +22,7 @@ const PersonalInfoStep = ({ data, errors, onChange }: PersonalInfoStepProps) => 
   const selectedCountry = COUNTRY_CODES.find((c) => c.phone === data.countryCode) || null;
 
   const handleDateChange = (date: Dayjs | null) => {
-    onChange('dateOfBirth', date ? date.format('YYYY-MM-DD') : '');
+    onChange('dateOfBirth', date ? date.format('DD/MM/YYYY') : '');
   };
 
   return (
@@ -136,9 +136,10 @@ const PersonalInfoStep = ({ data, errors, onChange }: PersonalInfoStepProps) => 
           <Grid size={{ xs: 12, md: 6 }}>
             <DatePicker
               label="Date of Birth *"
-              value={data.dateOfBirth ? dayjs(data.dateOfBirth) : null}
+              value={data.dateOfBirth ? dayjs(data.dateOfBirth, 'DD/MM/YYYY') : null}
               onChange={handleDateChange}
               maxDate={dayjs()}
+              format="DD/MM/YYYY"
               slotProps={{
                 textField: {
                   fullWidth: true,
