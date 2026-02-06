@@ -18,7 +18,7 @@ import { createSubmission } from '../services/indexedDB';
 import PersonalInfoStep from './steps/PersonalInfoStep';
 import EducationInfoStep from './steps/EducationInfoStep';
 import WorkExperienceStep from './steps/WorkExperienceStep';
-import { createEmptyJob } from './steps/WorkExperienceStep';
+import { createEmptyJob } from '../utils/workExperience';
 import styles from './Wizard.module.css';
 
 const initialFormData: FormData = {
@@ -109,6 +109,7 @@ const Wizard = () => {
       setSnackbar({ open: true, message: 'Form submitted successfully!', severity: 'success' });
       setTimeout(() => navigate('/data'), 2000);
     } catch (error) {
+      console.log(error)
       setSnackbar({ open: true, message: 'Failed to submit form. Please try again.', severity: 'error' });
     }
   };

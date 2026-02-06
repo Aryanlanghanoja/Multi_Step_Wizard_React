@@ -23,7 +23,7 @@ import { getSubmissionById, updateSubmission } from '../services/indexedDB';
 import PersonalInfoStep from './steps/PersonalInfoStep';
 import EducationInfoStep from './steps/EducationInfoStep';
 import WorkExperienceStep from './steps/WorkExperienceStep';
-import { createEmptyJob } from './steps/WorkExperienceStep';
+import { createEmptyJob } from '../utils/workExperience';
 import styles from './EditSubmission.module.css';
 
 const EditSubmission = () => {
