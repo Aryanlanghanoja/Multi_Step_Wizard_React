@@ -21,9 +21,9 @@ import {
   School as SchoolIcon,
   Person as PersonIcon,
 } from '@mui/icons-material';
-import type { FormData } from '../types';
-import { getSubmissionById } from '../services/indexedDB';
-import { printSubmission } from '../utils/print';
+import type { FormData } from '../../types';
+import { getSubmissionById } from '../../services/indexedDB';
+import { printSubmission } from '../../utils/print';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import styles from './ViewSubmission.module.css';

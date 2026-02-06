@@ -16,14 +16,14 @@ import {
   ArrowBack as ArrowBackIcon,
   Save as SaveIcon,
 } from '@mui/icons-material';
-import type { FormData, FormErrors } from '../types';
-import { STEPS } from '../utils/constants';
-import { validateForm, validateStep, validatePersonalInfo, validateWorkExperience } from '../utils/validation';
-import { getSubmissionById, updateSubmission } from '../services/indexedDB';
-import PersonalInfoStep from './steps/PersonalInfoStep';
-import EducationInfoStep from './steps/EducationInfoStep';
-import WorkExperienceStep from './steps/WorkExperienceStep';
-import { createEmptyJob } from '../utils/workExperience';
+import type { FormData, FormErrors } from '../../types';
+import { STEPS } from '../../utils/constants';
+import { validateForm, validateStep, validatePersonalInfo, validateWorkExperience } from '../../utils/validation';
+import { getSubmissionById, updateSubmission } from '../../services/indexedDB';
+import PersonalInfoStep from '../Wizard/Steps/PersonalInfoStep';
+import EducationInfoStep from '../Wizard/Steps/EducationInfoStep';
+import WorkExperienceStep from '../Wizard/Steps/WorkExperienceStep';
+import { createEmptyJob } from '../../utils/workExperience';
 import styles from './EditSubmission.module.css';
 
 const EditSubmission = () => {

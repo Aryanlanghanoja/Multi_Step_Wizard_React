@@ -10,8 +10,8 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
-import type { PersonalInfo, PersonalInfoErrors, CountryCode } from '../../types';
-import { COUNTRY_CODES } from '../../utils/constants';
+import type { PersonalInfo, PersonalInfoErrors, CountryCode } from '../../../types';
+import { COUNTRY_CODES } from '../../../utils/constants';
 
 dayjs.extend(customParseFormat);
 

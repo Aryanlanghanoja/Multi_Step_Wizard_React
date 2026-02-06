@@ -11,14 +11,14 @@ import {
   Snackbar,
   Alert,
 } from '@mui/material';
-import type { FormData, FormErrors } from '../types';
-import { STEPS } from '../utils/constants';
-import { validateForm, validateStep, validatePersonalInfo, validateWorkExperience } from '../utils/validation';
-import { createSubmission } from '../services/indexedDB';
-import PersonalInfoStep from './steps/PersonalInfoStep';
-import EducationInfoStep from './steps/EducationInfoStep';
-import WorkExperienceStep from './steps/WorkExperienceStep';
-import { createEmptyJob } from '../utils/workExperience';
+import type { FormData, FormErrors } from '../../types';
+import { STEPS } from '../../utils/constants';
+import { validateForm, validateStep, validatePersonalInfo, validateWorkExperience } from '../../utils/validation';
+import { createSubmission } from '../../services/indexedDB';
+import PersonalInfoStep from './Steps/PersonalInfoStep';
+import EducationInfoStep from './Steps/EducationInfoStep';
+import WorkExperienceStep from './Steps/WorkExperienceStep';
+import { createEmptyJob } from '../../utils/workExperience';
 import styles from './Wizard.module.css';
 
 const initialFormData: FormData = {

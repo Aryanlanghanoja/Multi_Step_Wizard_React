@@ -17,8 +17,8 @@ import dayjs, { Dayjs } from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
-import type { WorkExperience, WorkExperienceErrors, JobEntry, JobType } from '../../types';
-import { JOB_TYPE_OPTIONS } from '../../utils/constants';
+import type { WorkExperience, WorkExperienceErrors, JobEntry, JobType } from '../../../types';
+import { JOB_TYPE_OPTIONS } from '../../../utils/constants';
 
 dayjs.extend(customParseFormat);
 

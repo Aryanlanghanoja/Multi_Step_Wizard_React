@@ -1,10 +1,10 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import Wizard from './components/Wizard';
-import DataList from './components/DataList';
-import ViewSubmission from './components/ViewSubmission';
-import EditSubmission from './components/EditSubmission';
+import Wizard from './components/Wizard/Wizard';
+import DataList from './components/DataList/DataList';
+import ViewSubmission from './components/ViewSubmission/ViewSubmission';
+import EditSubmission from './components/EditSubmission/EditSubmission';
 import './App.module.css';
 
 const theme = createTheme({

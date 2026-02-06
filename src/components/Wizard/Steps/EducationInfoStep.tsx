@@ -11,8 +11,8 @@ import {
   Typography,
   Divider,
 } from '@mui/material';
-import type { EducationInfo, EducationInfoErrors, EducationType, BoardType } from '../../types';
-import { BOARD_OPTIONS, YEAR_OPTIONS, DEGREE_OPTIONS } from '../../utils/constants';
+import type { EducationInfo, EducationInfoErrors, EducationType, BoardType } from '../../../types';
+import { BOARD_OPTIONS, YEAR_OPTIONS, DEGREE_OPTIONS } from '../../../utils/constants';
 
 interface EducationInfoStepProps {
   data: EducationInfo;

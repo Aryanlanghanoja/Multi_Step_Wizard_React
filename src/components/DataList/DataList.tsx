@@ -27,9 +27,9 @@ import {
   Print as PrintIcon,
   Delete as DeleteIcon,
 } from '@mui/icons-material';
-import type { FormData } from '../types';
-import { getAllSubmissions, deleteSubmission } from '../services/indexedDB';
-import { printSubmission } from '../utils/print';
+import type { FormData } from '../../types';
+import { getAllSubmissions, deleteSubmission } from '../../services/indexedDB';
+import { printSubmission } from '../../utils/print';
 import styles from './DataList.module.css';
 
 const DataList = () => {
@@ -78,6 +78,7 @@ const DataList = () => {
       setSubmissions(prev => prev.filter(sub => sub.id !== deleteDialog.id));
       setSnackbar({ open: true, message: 'Form deleted successfully.', severity: 'success' });
     } catch (error) {
+      console.log(error)
       setSnackbar({ open: true, message: 'Failed to delete submission.', severity: 'error' });
     }
     setDeleteDialog({ open: false, id: null });
