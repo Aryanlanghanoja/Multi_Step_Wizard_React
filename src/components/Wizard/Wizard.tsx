@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 import type { FormData, FormErrors } from '../../types';
 import { STEPS } from '../../utils/constants';
-import { validateForm, validateStep, validatePersonalInfo, validateWorkExperience } from '../../utils/validation';
+import { validateForm, validateStep, validatePersonalInfo, validateWorkExperience, validateEducationInfo } from '../../utils/validation';
 import { createSubmission } from '../../services/indexedDB';
 import PersonalInfoStep from './Steps/PersonalInfoStep';
 import EducationInfoStep from './Steps/EducationInfoStep';
@@ -62,6 +62,50 @@ const initialFormData: FormData = {
   },
 };
 
+// Define proper types for touched state
+interface TouchedPersonalInfo {
+  [key: string]: boolean;
+}
+
+interface TouchedEducationInfo {
+  [section: string]: {
+    [field: string]: boolean;
+  };
+}
+
+interface TouchedJobs {
+  [jobId: string]: {
+    [field: string]: boolean;
+  };
+}
+
+interface TouchedWorkExperience {
+  totalExperience?: boolean;
+  currentCTC?: boolean;
+  expectedCTC?: boolean;
+  availableFrom?: boolean;
+  jobs?: TouchedJobs;
+}
+
+interface TouchedState {
+  personalInfo: TouchedPersonalInfo;
+  educationInfo: TouchedEducationInfo;
+  workExperience: TouchedWorkExperience;
+}
+
+const initialTouchedState: TouchedState = {
+  personalInfo: {},
+  educationInfo: {
+    tenth: {},
+    twelfth: {},
+    diploma: {},
+    graduation: {},
+  },
+  workExperience: {
+    jobs: {},
+  },
+};
+
 const Wizard = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [formData, setFormData] = useState<FormData>(initialFormData);
@@ -70,6 +114,7 @@ const Wizard = () => {
     educationInfo: {},
     workExperience: {},
   });
+  const [touched, setTouched] = useState<TouchedState>(initialTouchedState);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' as 'success' | 'error' });
   const navigate = useNavigate();
 
@@ -107,10 +152,9 @@ const Wizard = () => {
     try {
       await createSubmission(formData);
       setSnackbar({ open: true, message: 'Form submitted successfully!', severity: 'success' });
-      // setTimeout(() => navigate('/data'), 2000);
       navigate('/data');
     } catch (error) {
-      console.log(error)
+      console.log(error);
       setSnackbar({ open: true, message: 'Failed to submit form. Please try again.', severity: 'error' });
     }
   };
@@ -123,12 +167,9 @@ const Wizard = () => {
         [field]: value,
       },
     }));
-  };
 
-  const handlePersonalInfoBlur = (field: string) => {
-    // Re-validate the specific field on blur
+    // Validate on change - only update if field has an error
     const fieldErrors = validatePersonalInfo(formData.personalInfo);
-    // Only update if there's an error for this field
     if (fieldErrors[field as keyof typeof fieldErrors]) {
       setErrors(prev => ({
         ...prev,
@@ -138,6 +179,28 @@ const Wizard = () => {
         },
       }));
     }
+  };
+
+  const handlePersonalInfoBlur = (field: string) => {
+    // Mark field as touched
+    setTouched(prev => ({
+      ...prev,
+      personalInfo: {
+        ...prev.personalInfo,
+        [field]: true,
+      },
+    }));
+
+    // Re-validate the specific field on blur
+    const fieldErrors = validatePersonalInfo(formData.personalInfo);
+    // Update error state based on validation result
+    setErrors(prev => ({
+      ...prev,
+      personalInfo: {
+        ...prev.personalInfo,
+        [field]: fieldErrors[field as keyof typeof fieldErrors],
+      },
+    }));
   };
 
   const handleEducationChange = (section: string, field: string, value: string) => {
@@ -157,6 +220,52 @@ const Wizard = () => {
         educationInfo: updatedEducationInfo,
       };
     });
+
+    // Validate on change - update error state for the specific field
+    const fieldErrors = validateEducationInfo(formData.educationInfo);
+    const sectionFieldError = (fieldErrors as Record<string, Record<string, string | undefined>>)?.[section]?.[field];
+    
+    if (sectionFieldError) {
+      setErrors(prev => ({
+        ...prev,
+        educationInfo: {
+          ...prev.educationInfo,
+          [section]: {
+            ...(prev.educationInfo as Record<string, Record<string, string | undefined>>)?.[section],
+            [field]: sectionFieldError,
+          },
+        },
+      }));
+    }
+  };
+
+  const handleEducationBlur = (section: string, field: string) => {
+    // Mark field as touched
+    setTouched(prev => ({
+      ...prev,
+      educationInfo: {
+        ...prev.educationInfo,
+        [section]: {
+          ...prev.educationInfo[section],
+          [field]: true,
+        },
+      },
+    }));
+
+    // Validate on blur
+    const fieldErrors = validateEducationInfo(formData.educationInfo);
+    const sectionFieldError = (fieldErrors as Record<string, Record<string, string | undefined>>)?.[section]?.[field];
+    
+    setErrors(prev => ({
+      ...prev,
+      educationInfo: {
+        ...prev.educationInfo,
+        [section]: {
+          ...(prev.educationInfo as Record<string, Record<string, string | undefined>>)?.[section],
+          [field]: sectionFieldError,
+        },
+      },
+    }));
   };
 
   const handleEducationTypeChange = (type: string) => {
@@ -177,12 +286,9 @@ const Wizard = () => {
         [field]: value,
       },
     }));
-  };
 
-  const handleWorkExperienceBlur = (field: string) => {
-    // Re-validate the specific field on blur
+    // Validate on change - only update if field has an error
     const fieldErrors = validateWorkExperience(formData.workExperience);
-    // Only update if there's an error for this field
     if (fieldErrors[field as keyof typeof fieldErrors]) {
       setErrors(prev => ({
         ...prev,
@@ -194,6 +300,28 @@ const Wizard = () => {
     }
   };
 
+  const handleWorkExperienceBlur = (field: string) => {
+    // Mark field as touched
+    setTouched(prev => ({
+      ...prev,
+      workExperience: {
+        ...prev.workExperience,
+        [field]: true,
+      },
+    }));
+
+    // Re-validate the specific field on blur
+    const fieldErrors = validateWorkExperience(formData.workExperience);
+    // Update error state based on validation result
+    setErrors(prev => ({
+      ...prev,
+      workExperience: {
+        ...prev.workExperience,
+        [field]: fieldErrors[field as keyof typeof fieldErrors],
+      },
+    }));
+  };
+
   const handleJobChange = (jobId: string, field: string, value: string) => {
     setFormData(prev => ({
       ...prev,
@@ -202,6 +330,61 @@ const Wizard = () => {
         jobs: prev.workExperience.jobs.map(job =>
           job.id === jobId ? { ...job, [field]: value } : job
         ),
+      },
+    }));
+
+    // Validate on change for job fields
+    const fieldErrors = validateWorkExperience(formData.workExperience);
+    const jobFieldError = fieldErrors.jobs?.[jobId]?.[field as keyof typeof fieldErrors.jobs[typeof jobId]];
+    
+    if (jobFieldError) {
+      setErrors(prev => ({
+        ...prev,
+        workExperience: {
+          ...prev.workExperience,
+          jobs: {
+            ...prev.workExperience.jobs,
+            [jobId]: {
+              ...prev.workExperience.jobs?.[jobId],
+              [field]: jobFieldError,
+            },
+          },
+        },
+      }));
+    }
+  };
+
+  const handleJobBlur = (jobId: string, field: string) => {
+    // Mark job field as touched
+    setTouched(prev => ({
+      ...prev,
+      workExperience: {
+        ...prev.workExperience,
+        jobs: {
+          ...prev.workExperience.jobs,
+          [jobId]: {
+            ...prev.workExperience.jobs?.[jobId],
+            [field]: true,
+          },
+        },
+      },
+    }));
+
+    // Re-validate the specific field on blur
+    const fieldErrors = validateWorkExperience(formData.workExperience);
+    const jobFieldError = fieldErrors.jobs?.[jobId]?.[field as keyof typeof fieldErrors.jobs[typeof jobId]];
+    
+    setErrors(prev => ({
+      ...prev,
+      workExperience: {
+        ...prev.workExperience,
+        jobs: {
+          ...prev.workExperience.jobs,
+          [jobId]: {
+            ...prev.workExperience.jobs?.[jobId],
+            [field]: jobFieldError,
+          },
+        },
       },
     }));
   };
@@ -233,6 +416,7 @@ const Wizard = () => {
           <PersonalInfoStep
             data={formData.personalInfo}
             errors={errors.personalInfo}
+            touched={touched.personalInfo}
             onChange={handlePersonalInfoChange}
             onBlur={handlePersonalInfoBlur}
           />
@@ -242,7 +426,9 @@ const Wizard = () => {
           <EducationInfoStep
             data={formData.educationInfo}
             errors={errors.educationInfo}
+            touched={touched.educationInfo}
             onChange={handleEducationChange}
+            onBlur={handleEducationBlur}
             onEducationTypeChange={handleEducationTypeChange}
           />
         );
@@ -251,8 +437,10 @@ const Wizard = () => {
           <WorkExperienceStep
             data={formData.workExperience}
             errors={errors.workExperience}
+            touched={touched.workExperience}
             onChange={handleWorkExperienceChange}
             onJobChange={handleJobChange}
+            onJobBlur={handleJobBlur}
             onAddJob={handleAddJob}
             onRemoveJob={handleRemoveJob}
             onBlur={handleWorkExperienceBlur}
@@ -323,3 +511,4 @@ const Wizard = () => {
 };
 
 export default Wizard;
+

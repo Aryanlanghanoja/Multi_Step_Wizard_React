@@ -6,6 +6,7 @@ interface InputFieldProps extends Omit<TextFieldProps, 'error' | 'helperText' | 
   value: string;
   error?: string;
   helperText?: string;
+  success?: boolean;
   required?: boolean;
   tooltip?: string;
   onChange?: (value: string) => void;
@@ -13,6 +14,7 @@ interface InputFieldProps extends Omit<TextFieldProps, 'error' | 'helperText' | 
   validateOnChange?: boolean;
   validationPattern?: RegExp;
   customValidation?: (value: string) => string | undefined;
+  immediateValidation?: (value: string) => string | undefined;
 }
 
 const InputField = ({
@@ -20,6 +22,7 @@ const InputField = ({
   value,
   error,
   helperText,
+  success = false,
   required = false,
   tooltip,
   onChange,
@@ -27,6 +30,7 @@ const InputField = ({
   validateOnChange = false,
   validationPattern,
   customValidation,
+  immediateValidation,
   type = 'text',
   ...props
 }: InputFieldProps) => {
@@ -37,8 +41,16 @@ const InputField = ({
       onChange(newValue);
     }
 
-    // Validate on change if enabled
-    if (validateOnChange && onBlur) {
+    // Immediate validation on change if enabled
+    if (immediateValidation && onBlur) {
+      // Call validation but don't use the result - onBlur will handle the state update
+      immediateValidation(newValue);
+      // We call onBlur to trigger the parent's validation handler
+      onBlur();
+    }
+    
+    // Legacy validateOnChange with pattern/custom validation
+    if (validateOnChange && onBlur && !immediateValidation) {
       let validationError: string | undefined;
       
       if (validationPattern && !validationPattern.test(newValue)) {
@@ -60,6 +72,22 @@ const InputField = ({
     }
   };
 
+  const isSuccess = success && !error;
+
+  // Determine the helper text - priority: error > success > helperText
+  const getHelperText = () => {
+    if (error) return error;
+    if (isSuccess) return 'No error found';
+    return helperText;
+  };
+
+  // Determine the color based on error/success state
+  const getFieldColor = () => {
+    if (error) return 'error';
+    if (isSuccess) return 'success';
+    return undefined;
+  };
+
   const InputWrapper = tooltip ? (
     <Tooltip title={tooltip} arrow placement="top">
       <Box display="inline-flex" width="100%">
@@ -70,7 +98,8 @@ const InputField = ({
           onChange={handleChange}
           onBlur={handleBlur}
           error={!!error}
-          helperText={error || helperText}
+          helperText={getHelperText()}
+          color={getFieldColor()}
           required={required}
           type={type}
           {...props}
@@ -85,7 +114,8 @@ const InputField = ({
       onChange={handleChange}
       onBlur={handleBlur}
       error={!!error}
-      helperText={error || helperText}
+      helperText={getHelperText()}
+      color={getFieldColor()}
       required={required}
       type={type}
       {...props}

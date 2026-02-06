@@ -17,16 +17,33 @@ import SelectField from '../../InputField/SelectField';
 interface EducationInfoStepProps {
   data: EducationInfo;
   errors: EducationInfoErrors;
+  touched?: Record<string, Record<string, boolean>>;
   onChange: (section: string, field: string, value: string) => void;
+  onBlur: (section: string, field: string) => void;
   onEducationTypeChange: (type: EducationType) => void;
 }
 
 const EducationInfoStep = ({
   data,
   errors,
+  touched = {},
   onChange,
+  onBlur,
   onEducationTypeChange,
 }: EducationInfoStepProps) => {
+  // Validation helper functions
+  const validateRequired = (value: string): string | undefined => {
+    if (!value || (typeof value === 'string' && !value.trim())) {
+      return 'This field is required';
+    }
+    return undefined;
+  };
+
+  // Helper to determine if field should show success state
+  const isSuccess = (section: string, field: string): boolean => {
+    return !!touched[section]?.[field] && !(errors as any)?.[section]?.[field];
+  };
+
   return (
     <Box sx={{ mt: 2 }}>
       {/* 10th Details */}
@@ -41,7 +58,10 @@ const EducationInfoStep = ({
             value={data.tenth.passYear || null}
             onChange={(value) => onChange('tenth', 'passYear', value)}
             error={errors.tenth?.passYear}
+            success={isSuccess('tenth', 'passYear')}
             required
+            onBlur={() => onBlur('tenth', 'passYear')}
+            validateOnChange
           />
         </Grid>
         <Grid size={{ xs: 12, md: 6 }}>
@@ -51,7 +71,10 @@ const EducationInfoStep = ({
             value={data.tenth.board || null}
             onChange={(value) => onChange('tenth', 'board', value)}
             error={errors.tenth?.board}
+            success={isSuccess('tenth', 'board')}
             required
+            onBlur={() => onBlur('tenth', 'board')}
+            validateOnChange
           />
         </Grid>
       </Grid>
@@ -85,7 +108,10 @@ const EducationInfoStep = ({
                 value={data.twelfth.passYear || null}
                 onChange={(value) => onChange('twelfth', 'passYear', value)}
                 error={errors.twelfth?.passYear}
+                success={isSuccess('twelfth', 'passYear')}
                 required
+                onBlur={() => onBlur('twelfth', 'passYear')}
+                validateOnChange
               />
             </Grid>
             <Grid size={{ xs: 12, md: 6 }}>
@@ -95,7 +121,10 @@ const EducationInfoStep = ({
                 value={data.twelfth.board || null}
                 onChange={(value) => onChange('twelfth', 'board', value)}
                 error={errors.twelfth?.board}
+                success={isSuccess('twelfth', 'board')}
                 required
+                onBlur={() => onBlur('twelfth', 'board')}
+                validateOnChange
               />
             </Grid>
           </Grid>
@@ -116,7 +145,10 @@ const EducationInfoStep = ({
                 value={data.diploma.passYear || null}
                 onChange={(value) => onChange('diploma', 'passYear', value)}
                 error={errors.diploma?.passYear}
+                success={isSuccess('diploma', 'passYear')}
                 required
+                onBlur={() => onBlur('diploma', 'passYear')}
+                validateOnChange
               />
             </Grid>
             <Grid size={{ xs: 12, md: 4 }}>
@@ -125,7 +157,11 @@ const EducationInfoStep = ({
                 value={data.diploma.organization}
                 onChange={(value) => onChange('diploma', 'organization', value)}
                 error={errors.diploma?.organization}
+                success={isSuccess('diploma', 'organization')}
                 required
+                onBlur={() => onBlur('diploma', 'organization')}
+                validateOnChange
+                immediateValidation={validateRequired}
               />
             </Grid>
             <Grid size={{ xs: 12, md: 4 }}>
@@ -134,7 +170,11 @@ const EducationInfoStep = ({
                 value={data.diploma.major}
                 onChange={(value) => onChange('diploma', 'major', value)}
                 error={errors.diploma?.major}
+                success={isSuccess('diploma', 'major')}
                 required
+                onBlur={() => onBlur('diploma', 'major')}
+                validateOnChange
+                immediateValidation={validateRequired}
               />
             </Grid>
           </Grid>
@@ -155,7 +195,10 @@ const EducationInfoStep = ({
             value={data.graduation.completionYear || null}
             onChange={(value) => onChange('graduation', 'completionYear', value)}
             error={errors.graduation?.completionYear}
+            success={isSuccess('graduation', 'completionYear')}
             required
+            onBlur={() => onBlur('graduation', 'completionYear')}
+            validateOnChange
           />
         </Grid>
         <Grid size={{ xs: 12, md: 6 }}>
@@ -164,7 +207,11 @@ const EducationInfoStep = ({
             value={data.graduation.organization}
             onChange={(value) => onChange('graduation', 'organization', value)}
             error={errors.graduation?.organization}
+            success={isSuccess('graduation', 'organization')}
             required
+            onBlur={() => onBlur('graduation', 'organization')}
+            validateOnChange
+            immediateValidation={validateRequired}
           />
         </Grid>
         <Grid size={{ xs: 12, md: 6 }}>
@@ -174,7 +221,10 @@ const EducationInfoStep = ({
             value={data.graduation.degree || null}
             onChange={(value) => onChange('graduation', 'degree', value)}
             error={errors.graduation?.degree}
+            success={isSuccess('graduation', 'degree')}
             required
+            onBlur={() => onBlur('graduation', 'degree')}
+            validateOnChange
           />
         </Grid>
         <Grid size={{ xs: 12, md: 6 }}>
@@ -183,7 +233,11 @@ const EducationInfoStep = ({
             value={data.graduation.major}
             onChange={(value) => onChange('graduation', 'major', value)}
             error={errors.graduation?.major}
+            success={isSuccess('graduation', 'major')}
             required
+            onBlur={() => onBlur('graduation', 'major')}
+            validateOnChange
+            immediateValidation={validateRequired}
           />
         </Grid>
       </Grid>

@@ -24,8 +24,20 @@ dayjs.extend(customParseFormat);
 interface WorkExperienceStepProps {
   data: WorkExperience;
   errors: WorkExperienceErrors;
+  touched?: {
+    totalExperience?: boolean;
+    currentCTC?: boolean;
+    expectedCTC?: boolean;
+    availableFrom?: boolean;
+    jobs?: {
+      [jobId: string]: {
+        [field: string]: boolean;
+      };
+    };
+  };
   onChange: (field: keyof WorkExperience, value: string) => void;
   onJobChange: (jobId: string, field: keyof JobEntry, value: string) => void;
+  onJobBlur: (jobId: string, field: keyof JobEntry) => void;
   onAddJob: () => void;
   onRemoveJob: (jobId: string) => void;
   onBlur: (field: keyof WorkExperience) => void;
@@ -49,8 +61,10 @@ const parseDate = (dateString: string): Dayjs | undefined => {
 const WorkExperienceStep = ({
   data,
   errors,
+  touched = {},
   onChange,
   onJobChange,
+  onJobBlur,
   onAddJob,
   onRemoveJob,
   onBlur,
@@ -63,8 +77,32 @@ const WorkExperienceStep = ({
     onJobChange(jobId, field, date ? date.format('DD/MM/YYYY') : '');
   };
 
-  // Validation pattern for numeric values
-  const numericOnlyPattern = /^\d*\.?\d*$/;
+  // Validation helper functions
+  const validateRequired = (value: string): string | undefined => {
+    if (!value || (typeof value === 'string' && !value.trim())) {
+      return 'This field is required';
+    }
+    return undefined;
+  };
+
+  const validateNumeric = (value: string): string | undefined => {
+    if (!value.trim()) return 'This field is required';
+    if (!/^\d*\.?\d*$/.test(value)) return 'Should be a number';
+    return undefined;
+  };
+
+  // Helper to determine if field should show success state
+  const isSuccess = (field: string): boolean => {
+    if (touched && typeof touched[field as keyof typeof touched] === 'boolean') {
+      return !!touched[field as keyof typeof touched] && !(errors as unknown as Record<string, unknown>)?.[field];
+    }
+    return false;
+  };
+
+  // Helper to determine if job field should show success state
+  const isJobSuccess = (jobId: string, field: string): boolean => {
+    return !!(touched?.jobs?.[jobId]?.[field]) && !(errors.jobs?.[jobId] as unknown as Record<string, unknown>)?.[field];
+  };
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -78,11 +116,12 @@ const WorkExperienceStep = ({
               onChange={(value) => onChange('totalExperience', value)}
               onBlur={() => onBlur('totalExperience')}
               error={errors.totalExperience}
+              success={isSuccess('totalExperience')}
               required
               type="number"
               tooltip="Enter total years of experience"
               validateOnChange
-              validationPattern={numericOnlyPattern}
+              immediateValidation={validateNumeric}
               slotProps={{ htmlInput: { min: 0 } }}
             />
           </Grid>
@@ -126,7 +165,7 @@ const WorkExperienceStep = ({
                   value={parseDate(job.startDate)}
                   onChange={(date) => handleJobDateChange(job.id, 'startDate', date)}
                   format="DD/MM/YYYY"
-                  onClose={() => onBlur('jobs')}
+                  onClose={() => onJobBlur(job.id, 'startDate')}
                   slotProps={{
                     textField: {
                       fullWidth: true,
@@ -144,7 +183,7 @@ const WorkExperienceStep = ({
                   onChange={(date) => handleJobDateChange(job.id, 'endDate', date)}
                   minDate={job.startDate ? parseDate(job.startDate) : undefined}
                   format="DD/MM/YYYY"
-                  onClose={() => onBlur('jobs')}
+                  onClose={() => onJobBlur(job.id, 'endDate')}
                   slotProps={{
                     textField: {
                       fullWidth: true,
@@ -160,9 +199,12 @@ const WorkExperienceStep = ({
                   label="Designation"
                   value={job.designation}
                   onChange={(value) => onJobChange(job.id, 'designation', value)}
-                  onBlur={() => onBlur('jobs')}
+                  onBlur={() => onJobBlur(job.id, 'designation')}
                   error={errors.jobs?.[job.id]?.designation}
+                  success={isJobSuccess(job.id, 'designation')}
                   required
+                  validateOnChange
+                  immediateValidation={validateRequired}
                 />
               </Grid>
 
@@ -173,8 +215,10 @@ const WorkExperienceStep = ({
                   value={job.type || null}
                   onChange={(value) => onJobChange(job.id, 'type', value)}
                   error={errors.jobs?.[job.id]?.type}
+                  success={isJobSuccess(job.id, 'type')}
                   required
-                  onBlur={() => onBlur('jobs')}
+                  onBlur={() => onJobBlur(job.id, 'type')}
+                  validateOnChange
                 />
               </Grid>
 
@@ -183,11 +227,14 @@ const WorkExperienceStep = ({
                   label="Description"
                   value={job.description}
                   onChange={(value) => onJobChange(job.id, 'description', value)}
-                  onBlur={() => onBlur('jobs')}
+                  onBlur={() => onJobBlur(job.id, 'description')}
                   error={errors.jobs?.[job.id]?.description}
+                  success={isJobSuccess(job.id, 'description')}
                   required
                   multiline
                   rows={3}
+                  validateOnChange
+                  immediateValidation={validateRequired}
                 />
               </Grid>
             </Grid>
@@ -216,10 +263,11 @@ const WorkExperienceStep = ({
               onChange={(value) => onChange('currentCTC', value)}
               onBlur={() => onBlur('currentCTC')}
               error={errors.currentCTC}
+              success={isSuccess('currentCTC')}
               required
               tooltip="Enter your current CTC in LPA"
               validateOnChange
-              validationPattern={numericOnlyPattern}
+              immediateValidation={validateNumeric}
             />
           </Grid>
 
@@ -230,10 +278,11 @@ const WorkExperienceStep = ({
               onChange={(value) => onChange('expectedCTC', value)}
               onBlur={() => onBlur('expectedCTC')}
               error={errors.expectedCTC}
+              success={isSuccess('expectedCTC')}
               required
               tooltip="Enter your expected CTC in LPA"
               validateOnChange
-              validationPattern={numericOnlyPattern}
+              immediateValidation={validateNumeric}
             />
           </Grid>
 

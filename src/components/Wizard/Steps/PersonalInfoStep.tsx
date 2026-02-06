@@ -14,6 +14,7 @@ dayjs.extend(customParseFormat);
 interface PersonalInfoStepProps {
   data: PersonalInfo;
   errors: PersonalInfoErrors;
+  touched?: Record<string, boolean>;
   onChange: (field: keyof PersonalInfo, value: string) => void;
   onBlur: (field: keyof PersonalInfo) => void;
 }
@@ -33,10 +34,36 @@ const parseDate = (dateString: string): Dayjs | undefined => {
   return dayjs(dateString);
 };
 
-const PersonalInfoStep = ({ data, errors, onChange, onBlur }: PersonalInfoStepProps) => {
-  // Validation patterns
-  const alphaOnlyPattern = /^[a-zA-Z\s]*$/;
-  const numericOnlyPattern = /^\d*$/;
+const PersonalInfoStep = ({ data, errors, touched = {}, onChange, onBlur }: PersonalInfoStepProps) => {
+  // Email validation pattern
+  const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  // Phone validation helper
+  const validatePhoneNumber = (value: string): string | undefined => {
+    if (!value.trim()) return 'Phone number is required';
+    if (!/^\d*$/.test(value)) return 'Phone number should contain only digits';
+    if (value.length < 7 || value.length > 15) return 'Phone number should be 7-15 digits';
+    return undefined;
+  };
+
+  // Email validation helper
+  const validateEmail = (value: string): string | undefined => {
+    if (!value.trim()) return 'Email is required';
+    if (!EMAIL_REGEX.test(value)) return 'Please enter a valid email address';
+    return undefined;
+  };
+
+  // Name validation helper
+  const validateName = (value: string): string | undefined => {
+    if (!value.trim()) return 'This field is required';
+    if (!/^[a-zA-Z\s]*$/.test(value)) return 'Should contain only alphabets';
+    return undefined;
+  };
+
+  // Helper to determine if field should show success state
+  const isSuccess = (field: string): boolean => {
+    return !!touched[field] && !errors[field as keyof typeof errors];
+  };
 
   const handleDateChange = (date: Dayjs | null) => {
     onChange('dateOfBirth', date ? date.format('DD/MM/YYYY') : '');
@@ -54,10 +81,11 @@ const PersonalInfoStep = ({ data, errors, onChange, onBlur }: PersonalInfoStepPr
               onChange={(value) => onChange('firstName', value)}
               onBlur={() => onBlur('firstName')}
               error={errors.firstName}
+              success={isSuccess('firstName')}
               required
               tooltip="Enter your first name (alphabets only)"
               validateOnChange
-              validationPattern={alphaOnlyPattern}
+              immediateValidation={validateName}
             />
           </Grid>
 
@@ -69,9 +97,10 @@ const PersonalInfoStep = ({ data, errors, onChange, onBlur }: PersonalInfoStepPr
               onChange={(value) => onChange('middleName', value)}
               onBlur={() => onBlur('middleName')}
               error={errors.middleName}
+              success={isSuccess('middleName')}
               tooltip="Enter your middle name (optional)"
               validateOnChange
-              validationPattern={alphaOnlyPattern}
+              immediateValidation={validateName}
             />
           </Grid>
 
@@ -83,10 +112,11 @@ const PersonalInfoStep = ({ data, errors, onChange, onBlur }: PersonalInfoStepPr
               onChange={(value) => onChange('lastName', value)}
               onBlur={() => onBlur('lastName')}
               error={errors.lastName}
+              success={isSuccess('lastName')}
               required
               tooltip="Enter your last name (alphabets only)"
               validateOnChange
-              validationPattern={alphaOnlyPattern}
+              immediateValidation={validateName}
             />
           </Grid>
 
@@ -98,8 +128,10 @@ const PersonalInfoStep = ({ data, errors, onChange, onBlur }: PersonalInfoStepPr
               value={data.countryCode}
               onChange={(value) => onChange('countryCode', value)}
               error={errors.countryCode}
+              success={isSuccess('countryCode')}
               required
               onBlur={() => onBlur('countryCode')}
+              validateOnChange
             />
           </Grid>
 
@@ -111,10 +143,11 @@ const PersonalInfoStep = ({ data, errors, onChange, onBlur }: PersonalInfoStepPr
               onChange={(value) => onChange('phoneNumber', value)}
               onBlur={() => onBlur('phoneNumber')}
               error={errors.phoneNumber}
+              success={isSuccess('phoneNumber')}
               required
               tooltip="Enter phone number (digits only, 7-15 characters)"
               validateOnChange
-              validationPattern={numericOnlyPattern}
+              immediateValidation={validatePhoneNumber}
               slotProps={{
                 input: {
                   startAdornment: data.countryCode ? (
@@ -134,9 +167,11 @@ const PersonalInfoStep = ({ data, errors, onChange, onBlur }: PersonalInfoStepPr
               onChange={(value) => onChange('email', value)}
               onBlur={() => onBlur('email')}
               error={errors.email}
+              success={isSuccess('email')}
               required
               tooltip="Enter a valid email address"
               validateOnChange
+              immediateValidation={validateEmail}
             />
           </Grid>
 
