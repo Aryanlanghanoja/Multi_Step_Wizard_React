@@ -1,0 +1,88 @@
+This is a Practice React + Typescript Project. 
+In this we have to use a many MUI component aas possible.
+
+The Project is Multi Wizard Application Form.
+
+There should be 2 routes in the Application
+
+1) / -> Form
+2) /data
+3) /edit/:id
+4) /view/:id
+
+Section - 1 ) Personal Information :- 
+
+First Name
+Middle Name
+Last Name
+Country Code(Dropdown) - Phone No
+Email Address
+DOB
+
+Section - 2 ) Education Details :-
+
+10th Pass Year
+Board Dropdown (ICSE , CBSE , Stateboard)
+
+Radio Button (Diplome / 12th)
+
+if 12th then
+12th Pass Year
+Board Dropdown (ICSE , CBSE , Stateboard) 
+fields should be displayed
+
+if diploma selected
+Passing Year
+Organization
+Major
+fields should be displayed
+
+Graduation
+Competion Year
+Organization 
+Degree (DROP DOWN)
+Major
+
+Section - 3) Work Experience
+
+Experience (in Years)
+
+Job / Internship Details (Could be multiple so add button should be there)
+Start   
+End   
+Designation
+Type (Full Time / Part Time / Internship) - Dropdown   
+Description
+
+Current CTC
+Expected CTC
+Available from   
+
+- When User Submits the Form, It should store the data in structured format in indexed DB.
+- Each Entry Should Have Unique ID OF 8-Character Hex Value.
+- User can view all submission on /data route in table format
+- The Table Sould Have Fields like ID , First name , Last name , actions
+- In actions View , Print , Edit and Delete
+- When Hit View , Should redirect to /view route.
+- Data Should be displayed in Proper Professional Format.
+- At View Page There Should Edit and Print Button.
+- Print Button shold print the form and download it in .pdf format
+- When hitted Edit. it should redirect to edit where data should be prefilled and can be editable
+- Now When User is filling the form, We need to have real-time validation and until all the field is not validated we need to disable next/submit button.
+- We need to display the errors regarding validation under the repective feild in realtime
+- When User Hits Delete. it should have Alert, "Are You Sure to Delete ?".
+- And After Sucessfull Deletion It Should Have Snackbar Popeed Up From Bottom right Form Delted Sucessfully.
+
+Use 
+
+Box
+Grid
+Textfield
+Textfield multiline (Textarea)
+Autocomplete
+Date Picker
+Tooltip
+Table
+Model/Dialog (Popup)  
+
+Use this all in this Project.

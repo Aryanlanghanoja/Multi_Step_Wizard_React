@@ -1,0 +1,31 @@
+.viewSubmission {
+    min-height: 100vh;
+    background-color: #f5f5f5;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 30px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.actions {
+    display: flex;
+    gap: 16px;
+}
+
+.section {
+    margin-bottom: 24px;
+}
+
+.jobCard {
+    margin-bottom: 16px;
+}
