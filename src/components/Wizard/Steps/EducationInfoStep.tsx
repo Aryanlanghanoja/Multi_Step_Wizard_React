@@ -127,7 +127,7 @@ const EducationInfoStep = ({
         </>
       )}
 
-      {data.educationType === 'diploma' && (
+      {data.educationType === 'Diploma' && (
         <>
           <Typography variant="h6" gutterBottom>
             Diploma Details

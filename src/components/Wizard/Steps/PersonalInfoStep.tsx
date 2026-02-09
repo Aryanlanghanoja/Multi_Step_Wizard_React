@@ -167,8 +167,12 @@ const PersonalInfoStep = ({ data, errors, touched = {}, onChange, onBlur }: Pers
               label="Date of Birth *"
               value={parseDate(data.dateOfBirth)}
               onChange={handleDateChange}
-              maxDate={dayjs()}
               format="DD/MM/YYYY"
+              disableFuture
+              maxDate={dayjs().subtract(1, 'day')}
+              shouldDisableDate={(date) =>
+                date.isSame(dayjs(), 'day') || date.isAfter(dayjs())
+              }
               onClose={() => onBlur('dateOfBirth')}
               slotProps={{
                 textField: {

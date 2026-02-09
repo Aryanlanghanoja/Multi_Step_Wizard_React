@@ -58,6 +58,7 @@ export interface JobEntry {
 export interface WorkExperience {
   totalExperience: string;
   jobs: JobEntry[];
+  skills: string[];
   currentCTC: string;
   expectedCTC: string;
   availableFrom: string;

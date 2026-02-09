@@ -6,6 +6,9 @@ import {
   IconButton,
   Paper,
   Divider,
+  Autocomplete,
+  TextField,
+  Chip,
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -15,7 +18,7 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import type { WorkExperience, WorkExperienceErrors, JobEntry } from '../../../types';
-import { JOB_TYPE_OPTIONS } from '../../../utils/constants';
+import { JOB_TYPE_OPTIONS, SKILLS_OPTIONS } from '../../../utils/constants';
 import InputField from '../../InputField/InputField';
 import SelectField from '../../InputField/SelectField';
 
@@ -26,6 +29,7 @@ interface WorkExperienceStepProps {
   errors: WorkExperienceErrors;
   touched?: {
     totalExperience?: boolean;
+    skills?: boolean;
     currentCTC?: boolean;
     expectedCTC?: boolean;
     availableFrom?: boolean;
@@ -36,6 +40,7 @@ interface WorkExperienceStepProps {
     };
   };
   onChange: (field: keyof WorkExperience, value: string) => void;
+  onSkillsChange: (skills: string[]) => void;
   onJobChange: (jobId: string, field: keyof JobEntry, value: string) => void;
   onJobBlur: (jobId: string, field: keyof JobEntry) => void;
   onAddJob: () => void;
@@ -44,8 +49,8 @@ interface WorkExperienceStepProps {
 }
 
 // Utility function to parse date in either YYYY-MM-DD or DD/MM/YYYY format
-const parseDate = (dateString: string): Dayjs | undefined => {
-  if (!dateString) return undefined;
+const parseDate = (dateString: string): Dayjs | null => {
+  if (!dateString) return null;
   // Try DD/MM/YYYY first (new format)
   if (dayjs(dateString, 'DD/MM/YYYY', true).isValid()) {
     return dayjs(dateString, 'DD/MM/YYYY');
@@ -63,6 +68,7 @@ const WorkExperienceStep = ({
   errors,
   touched = {},
   onChange,
+  onSkillsChange,
   onJobChange,
   onJobBlur,
   onAddJob,
@@ -129,6 +135,37 @@ const WorkExperienceStep = ({
 
         <Divider sx={{ my: 3 }} />
 
+        {/* Skills */}
+        <Typography variant="h6" gutterBottom>
+          Skills
+        </Typography>
+        <Grid container spacing={3}>
+          <Grid size={{ xs: 12 }}>
+            <Autocomplete
+              multiple
+              freeSolo
+              options={SKILLS_OPTIONS}
+              value={data.skills}
+              onChange={(_, newValue) => onSkillsChange(newValue)}
+              renderTags={(value: readonly string[], getTagProps) =>
+                value.map((option: string, index: number) => (
+                  <Chip variant="outlined" label={option} {...getTagProps({ index })} />
+                ))
+              }
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Skills"
+                  placeholder="Add skills..."
+                  helperText="Select from the list or type to add custom skills"
+                />
+              )}
+            />
+          </Grid>
+        </Grid>
+
+        <Divider sx={{ my: 3 }} />
+
         {/* Job Entries */}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
           <Typography variant="h6">Job / Internship Details</Typography>
@@ -181,7 +218,7 @@ const WorkExperienceStep = ({
                   label="End Date *"
                   value={parseDate(job.endDate)}
                   onChange={(date) => handleJobDateChange(job.id, 'endDate', date)}
-                  minDate={job.startDate ? parseDate(job.startDate) : undefined}
+                  minDate={job.startDate ? parseDate(job.startDate) || undefined : undefined}
                   format="DD/MM/YYYY"
                   onClose={() => onJobBlur(job.id, 'endDate')}
                   slotProps={{
@@ -292,6 +329,7 @@ const WorkExperienceStep = ({
               value={parseDate(data.availableFrom)}
               onChange={(date) => handleDateChange('availableFrom', date)}
               format="DD/MM/YYYY"
+              minDate={dayjs().subtract(1, 'day')}
               onClose={() => onBlur('availableFrom')}
               slotProps={{
                 textField: {

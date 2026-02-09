@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import type {
   PersonalInfo,
   EducationInfo,
@@ -55,9 +56,10 @@ export const validatePersonalInfo = (data: PersonalInfo): PersonalInfoErrors => 
   if (!data.dateOfBirth) {
     errors.dateOfBirth = 'Date of birth is required';
   } else {
-    const dob = new Date(data.dateOfBirth);
-    const today = new Date();
-    if (dob > today) {
+    const dob = dayjs(data.dateOfBirth, 'DD/MM/YYYY', true);
+    if (!dob.isValid()) {
+      errors.dateOfBirth = 'Invalid date of birth';
+    } else if (dob.isAfter(dayjs())) {
       errors.dateOfBirth = 'Date of birth cannot be in the future';
     }
   }
@@ -85,9 +87,9 @@ export const validateEducationInfo = (data: EducationInfo): EducationInfoErrors 
       errors.twelfth = { ...errors.twelfth, board: '12th board is required' };
     }
 
-  } 
-  
-  else if (data.educationType === 'diploma') {
+  }
+
+  else if (data.educationType === 'Diploma') {
     if (!data.diploma.passYear) {
       errors.diploma = { ...errors.diploma, passYear: 'Diploma pass year is required' };
     }
@@ -187,6 +189,14 @@ export const validateWorkExperience = (data: WorkExperience): WorkExperienceErro
 
   if (!data.availableFrom) {
     errors.availableFrom = 'Available from date is required';
+  } else {
+    const availableDate = dayjs(data.availableFrom, 'DD/MM/YYYY', true);
+    if (!availableDate.isValid()) {
+      errors.availableFrom = 'Invalid date';
+    }
+    // } else if (availableDate.isBefore(dayjs().add(1, 'day'), 'day')) {
+    //   errors.availableFrom = 'Available date must be in the future';
+    // }
   }
 
   return errors;

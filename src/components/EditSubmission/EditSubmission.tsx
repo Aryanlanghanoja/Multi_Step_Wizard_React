@@ -38,11 +38,12 @@ const EditSubmission = () => {
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [snackbar, setSnackbar] = useState({ 
-    open: false, 
-    message: '', 
-    severity: 'success' as 'success' | 'error' 
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'success' as 'success' | 'error'
   });
+
 
   useEffect(() => {
     const loadSubmission = async () => {
@@ -171,7 +172,7 @@ const EditSubmission = () => {
         ...prev,
         educationInfo: {
           ...prev.educationInfo,
-          educationType: type as 'diploma' | '12th',
+          educationType: type as 'Diploma' | '12th',
         },
       };
     });
@@ -192,9 +193,7 @@ const EditSubmission = () => {
 
   const handleWorkExperienceBlur = (field: string) => {
     if (!formData) return;
-    // Re-validate the specific field on blur
     const fieldErrors = validateWorkExperience(formData.workExperience);
-    // Only update if there's an error for this field
     if (fieldErrors[field as keyof typeof fieldErrors]) {
       setErrors(prev => ({
         ...prev,
@@ -247,6 +246,73 @@ const EditSubmission = () => {
     });
   };
 
+  const handleSkillsChange = (skills: string[]) => {
+    setFormData(prev => {
+      if (!prev) return null;
+      return {
+        ...prev,
+        workExperience: {
+          ...prev.workExperience,
+          skills,
+        },
+      };
+    });
+  };
+
+  const handleJobBlur = (jobId: string, field: string) => {
+    if (!formData) return;
+    const job = formData.workExperience.jobs.find(j => j.id === jobId);
+    if (!job) return;
+
+    // Validate the specific field
+    let error: string | undefined;
+    switch (field) {
+      case 'startDate':
+        if (!job.startDate) {
+          error = 'Start date is required';
+        }
+        break;
+      case 'endDate':
+        if (!job.endDate) {
+          error = 'End date is required';
+        } else if (job.startDate && new Date(job.startDate) >= new Date(job.endDate)) {
+          error = 'End date must be after start date';
+        }
+        break;
+      case 'designation':
+        if (!job.designation.trim()) {
+          error = 'Designation is required';
+        }
+        break;
+      case 'type':
+        if (!job.type) {
+          error = 'Job type is required';
+        }
+        break;
+      case 'description':
+        if (!job.description.trim()) {
+          error = 'Description is required';
+        }
+        break;
+      default:
+        break;
+    }
+
+    setErrors(prev => ({
+      ...prev,
+      workExperience: {
+        ...prev.workExperience,
+        jobs: {
+          ...prev.workExperience.jobs,
+          [jobId]: {
+            ...prev.workExperience.jobs?.[jobId],
+            [field]: error,
+          },
+        },
+      },
+    }));
+  };
+
   const renderStepContent = (step: number) => {
     if (!formData) return null;
 
@@ -266,6 +332,7 @@ const EditSubmission = () => {
             data={formData.educationInfo}
             errors={errors.educationInfo}
             onChange={handleEducationChange}
+            onBlur={() => {}}
             onEducationTypeChange={handleEducationTypeChange}
           />
         );
@@ -275,10 +342,12 @@ const EditSubmission = () => {
             data={formData.workExperience}
             errors={errors.workExperience}
             onChange={handleWorkExperienceChange}
+            onSkillsChange={handleSkillsChange}
             onJobChange={handleJobChange}
             onAddJob={handleAddJob}
             onRemoveJob={handleRemoveJob}
             onBlur={handleWorkExperienceBlur}
+            onJobBlur={handleJobBlur}
           />
         );
       default:

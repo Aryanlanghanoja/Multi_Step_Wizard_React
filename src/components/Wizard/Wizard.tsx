@@ -56,6 +56,7 @@ const initialFormData: FormData = {
   workExperience: {
     totalExperience: '',
     jobs: [],
+    skills: [],
     currentCTC: '',
     expectedCTC: '',
     availableFrom: '',
@@ -81,6 +82,7 @@ interface TouchedJobs {
 
 interface TouchedWorkExperience {
   totalExperience?: boolean;
+  skills?: boolean;
   currentCTC?: boolean;
   expectedCTC?: boolean;
   availableFrom?: boolean;
@@ -275,7 +277,7 @@ const Wizard = () => {
       ...prev,
       educationInfo: {
         ...prev.educationInfo,
-        educationType: type as 'diploma' | '12th',
+        educationType: type as 'Diploma' | '12th',
       },
     }));
   };
@@ -300,6 +302,16 @@ const Wizard = () => {
         },
       }));
     }
+  };
+
+  const handleSkillsChange = (skills: string[]) => {
+    setFormData(prev => ({
+      ...prev,
+      workExperience: {
+        ...prev.workExperience,
+        skills,
+      },
+    }));
   };
 
   const handleWorkExperienceBlur = (field: string) => {
@@ -441,6 +453,7 @@ const Wizard = () => {
             errors={errors.workExperience}
             touched={touched.workExperience}
             onChange={handleWorkExperienceChange}
+            onSkillsChange={handleSkillsChange}
             onJobChange={handleJobChange}
             onJobBlur={handleJobBlur}
             onAddJob={handleAddJob}

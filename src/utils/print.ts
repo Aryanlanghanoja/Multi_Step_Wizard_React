@@ -288,6 +288,15 @@ export const printSubmission = (submission: FormData): void => {
           </div>
         </div>
 
+        ${submission.workExperience.skills && submission.workExperience.skills.length > 0 ? `
+        <div style="margin-bottom: 20px;">
+          <div style="font-weight: 600; color: #666; margin-bottom: 10px;">Skills</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+            ${submission.workExperience.skills.map(skill => `<span style="background: #e3f2fd; color: #1976d2; padding: 4px 8px; border-radius: 4px; font-size: 12px; border: 1px solid #bbdefb;">${skill}</span>`).join('')}
+          </div>
+        </div>
+        ` : ''}
+
         ${submission.workExperience.jobs.length > 0 ? `
         <div style="font-weight: 600; color: #666; margin-bottom: 15px;">Job/Internship Details</div>
         ${submission.workExperience.jobs.map((job, index) => `

@@ -40,7 +40,40 @@ export const DEGREE_OPTIONS: string[] = [
 const currentYear = new Date().getFullYear();
 export const YEAR_OPTIONS: string[] = Array.from(
   { length: currentYear - 1970 + 6 },
-  (_, i) => (1970 + i).toString()
+  (_, i) => (1947 + i).toString()
 ).reverse();
+
+export const SKILLS_OPTIONS = [
+  'JavaScript',
+  'TypeScript',
+  'React',
+  'Node.js',
+  'Python',
+  'Java',
+  'C++',
+  'C#',
+  'PHP',
+  'Ruby',
+  'Go',
+  'Rust',
+  'HTML',
+  'CSS',
+  'SASS',
+  'SQL',
+  'MongoDB',
+  'PostgreSQL',
+  'MySQL',
+  'Redis',
+  'AWS',
+  'Azure',
+  'Docker',
+  'Kubernetes',
+  'Git',
+  'Linux',
+  'Agile',
+  'Scrum',
+  'REST API',
+  'GraphQL',
+];
 
 export const STEPS = ['Personal Information', 'Education Details', 'Work Experience'];
