@@ -9,9 +9,9 @@ export interface PersonalInfo {
   dateOfBirth: string;
 }
 
-// Education Types
+
 export type BoardType = 'ICSE' | 'CBSE' | 'State Board' | '';
-export type EducationType = 'diploma' | '12th';
+export type EducationType = 'Diploma' | '12th';
 
 export interface TenthDetails {
   passYear: string;
@@ -44,7 +44,6 @@ export interface EducationInfo {
   graduation: GraduationDetails;
 }
 
-// Work Experience Types
 export type JobType = 'Full Time' | 'Part Time' | 'Internship' | '';
 
 export interface JobEntry {
@@ -64,7 +63,6 @@ export interface WorkExperience {
   availableFrom: string;
 }
 
-// Complete Form Data
 export interface FormData {
   id?: string;
   personalInfo: PersonalInfo;
@@ -74,7 +72,6 @@ export interface FormData {
   updatedAt?: string;
 }
 
-// Validation Errors
 export interface PersonalInfoErrors {
   firstName?: string;
   middleName?: string;
@@ -129,7 +126,6 @@ export interface FormErrors {
   workExperience: WorkExperienceErrors;
 }
 
-// Country Code Type
 export interface CountryCode {
   code: string;
   label: string;

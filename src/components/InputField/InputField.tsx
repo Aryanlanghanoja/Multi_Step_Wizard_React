@@ -41,15 +41,11 @@ const InputField = ({
       onChange(newValue);
     }
 
-    // Immediate validation on change if enabled
     if (immediateValidation && onBlur) {
-      // Call validation but don't use the result - onBlur will handle the state update
       immediateValidation(newValue);
-      // We call onBlur to trigger the parent's validation handler
       onBlur();
     }
     
-    // Legacy validateOnChange with pattern/custom validation
     if (validateOnChange && onBlur && !immediateValidation) {
       let validationError: string | undefined;
       
@@ -59,7 +55,6 @@ const InputField = ({
         validationError = customValidation(newValue);
       }
       
-      // Only call onBlur if there's an error to clear/set it
       if (validationError || (!required && newValue === '')) {
         onBlur();
       }
@@ -74,14 +69,12 @@ const InputField = ({
 
   const isSuccess = success && !error;
 
-  // Determine the helper text - priority: error > success > helperText
   const getHelperText = () => {
     if (error) return error;
     if (isSuccess) return 'No error found';
     return helperText;
   };
 
-  // Determine the color based on error/success state
   const getFieldColor = () => {
     if (error) return 'error';
     if (isSuccess) return 'success';

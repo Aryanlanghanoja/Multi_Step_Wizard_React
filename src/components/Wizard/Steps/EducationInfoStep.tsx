@@ -31,7 +31,7 @@ const EducationInfoStep = ({
   onBlur,
   onEducationTypeChange,
 }: EducationInfoStepProps) => {
-  // Validation helper functions
+
   const validateRequired = (value: string): string | undefined => {
     if (!value || (typeof value === 'string' && !value.trim())) {
       return 'This field is required';
@@ -39,14 +39,12 @@ const EducationInfoStep = ({
     return undefined;
   };
 
-  // Helper to determine if field should show success state
   const isSuccess = (section: string, field: string): boolean => {
     return !!touched[section]?.[field] && !(errors as any)?.[section]?.[field];
   };
 
   return (
     <Box sx={{ mt: 2 }}>
-      {/* 10th Details */}
       <Typography variant="h6" gutterBottom>
         10th Standard Details
       </Typography>
@@ -81,7 +79,6 @@ const EducationInfoStep = ({
 
       <Divider sx={{ my: 3 }} />
 
-      {/* Education Type Selection */}
       <FormControl component="fieldset" sx={{ mb: 2 }}>
         <FormLabel component="legend">Education Type After 10th</FormLabel>
         <RadioGroup
@@ -94,7 +91,6 @@ const EducationInfoStep = ({
         </RadioGroup>
       </FormControl>
 
-      {/* 12th Details - Conditional */}
       {data.educationType === '12th' && (
         <>
           <Typography variant="h6" gutterBottom>
@@ -131,7 +127,6 @@ const EducationInfoStep = ({
         </>
       )}
 
-      {/* Diploma Details - Conditional */}
       {data.educationType === 'diploma' && (
         <>
           <Typography variant="h6" gutterBottom>
@@ -183,7 +178,6 @@ const EducationInfoStep = ({
 
       <Divider sx={{ my: 3 }} />
 
-      {/* Graduation Details */}
       <Typography variant="h6" gutterBottom>
         Graduation Details
       </Typography>

@@ -4,14 +4,12 @@ const DB_NAME = 'MultiStepWizardDB';
 const DB_VERSION = 1;
 const STORE_NAME = 'submissions';
 
-// Generate 8-character hexadecimal ID
 export const generateId = (): string => {
   return Array.from({ length: 8 }, () =>
     Math.floor(Math.random() * 16).toString(16)
   ).join('');
 };
 
-// Initialize Database
 const openDB = (): Promise<IDBDatabase> => {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, DB_VERSION);
@@ -28,7 +26,6 @@ const openDB = (): Promise<IDBDatabase> => {
   });
 };
 
-// Create - Add new submission
 export const createSubmission = async (data: Omit<FormData, 'id' | 'createdAt'>): Promise<FormData> => {
   const db = await openDB();
   return new Promise((resolve, reject) => {
@@ -48,7 +45,6 @@ export const createSubmission = async (data: Omit<FormData, 'id' | 'createdAt'>)
   });
 };
 
-// Read - Get all submissions
 export const getAllSubmissions = async (): Promise<FormData[]> => {
   const db = await openDB();
   return new Promise((resolve, reject) => {
@@ -61,7 +57,6 @@ export const getAllSubmissions = async (): Promise<FormData[]> => {
   });
 };
 
-// Read - Get single submission by ID
 export const getSubmissionById = async (id: string): Promise<FormData | undefined> => {
   const db = await openDB();
   return new Promise((resolve, reject) => {
@@ -74,7 +69,6 @@ export const getSubmissionById = async (id: string): Promise<FormData | undefine
   });
 };
 
-// Update - Update existing submission
 export const updateSubmission = async (data: FormData): Promise<FormData> => {
   const db = await openDB();
   return new Promise((resolve, reject) => {
@@ -91,8 +85,7 @@ export const updateSubmission = async (data: FormData): Promise<FormData> => {
     request.onerror = () => reject(request.error);
   });
 };
-
-// Delete - Remove submission
+ 
 export const deleteSubmission = async (id: string): Promise<void> => {
   const db = await openDB();
   return new Promise((resolve, reject) => {

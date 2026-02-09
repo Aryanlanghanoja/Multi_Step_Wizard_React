@@ -19,26 +19,22 @@ interface PersonalInfoStepProps {
   onBlur: (field: keyof PersonalInfo) => void;
 }
 
-// Utility function to parse date in either YYYY-MM-DD or DD/MM/YYYY format
 const parseDate = (dateString: string): Dayjs | undefined => {
   if (!dateString) return undefined;
-  // Try DD/MM/YYYY first (new format)
   if (dayjs(dateString, 'DD/MM/YYYY', true).isValid()) {
     return dayjs(dateString, 'DD/MM/YYYY');
   }
-  // Fall back to YYYY-MM-DD (old format for existing data)
+
   if (dayjs(dateString, 'YYYY-MM-DD', true).isValid()) {
     return dayjs(dateString, 'YYYY-MM-DD');
   }
-  // Try default parsing
+
   return dayjs(dateString);
 };
 
 const PersonalInfoStep = ({ data, errors, touched = {}, onChange, onBlur }: PersonalInfoStepProps) => {
-  // Email validation pattern
   const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  // Phone validation helper
   const validatePhoneNumber = (value: string): string | undefined => {
     if (!value.trim()) return 'Phone number is required';
     if (!/^\d*$/.test(value)) return 'Phone number should contain only digits';
@@ -46,21 +42,18 @@ const PersonalInfoStep = ({ data, errors, touched = {}, onChange, onBlur }: Pers
     return undefined;
   };
 
-  // Email validation helper
   const validateEmail = (value: string): string | undefined => {
     if (!value.trim()) return 'Email is required';
     if (!EMAIL_REGEX.test(value)) return 'Please enter a valid email address';
     return undefined;
   };
 
-  // Name validation helper
   const validateName = (value: string): string | undefined => {
     if (!value.trim()) return 'This field is required';
     if (!/^[a-zA-Z\s]*$/.test(value)) return 'Should contain only alphabets';
     return undefined;
   };
 
-  // Helper to determine if field should show success state
   const isSuccess = (field: string): boolean => {
     return !!touched[field] && !errors[field as keyof typeof errors];
   };
@@ -73,7 +66,6 @@ const PersonalInfoStep = ({ data, errors, touched = {}, onChange, onBlur }: Pers
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Box sx={{ mt: 2 }}>
         <Grid container spacing={3}>
-          {/* First Name */}
           <Grid size={{ xs: 12, md: 4 }}>
             <InputField
               label="First Name"
@@ -89,7 +81,6 @@ const PersonalInfoStep = ({ data, errors, touched = {}, onChange, onBlur }: Pers
             />
           </Grid>
 
-          {/* Middle Name */}
           <Grid size={{ xs: 12, md: 4 }}>
             <InputField
               label="Middle Name"
@@ -104,7 +95,6 @@ const PersonalInfoStep = ({ data, errors, touched = {}, onChange, onBlur }: Pers
             />
           </Grid>
 
-          {/* Last Name */}
           <Grid size={{ xs: 12, md: 4 }}>
             <InputField
               label="Last Name"
@@ -120,7 +110,6 @@ const PersonalInfoStep = ({ data, errors, touched = {}, onChange, onBlur }: Pers
             />
           </Grid>
 
-          {/* Country Code */}
           <Grid size={{ xs: 12, md: 4 }}>
             <SelectField
               label="Country Code"
@@ -135,7 +124,6 @@ const PersonalInfoStep = ({ data, errors, touched = {}, onChange, onBlur }: Pers
             />
           </Grid>
 
-          {/* Phone Number */}
           <Grid size={{ xs: 12, md: 8 }}>
             <InputField
               label="Phone Number"
@@ -158,7 +146,6 @@ const PersonalInfoStep = ({ data, errors, touched = {}, onChange, onBlur }: Pers
             />
           </Grid>
 
-          {/* Email */}
           <Grid size={{ xs: 12, md: 6 }}>
             <InputField
               label="Email Address"
@@ -175,7 +162,6 @@ const PersonalInfoStep = ({ data, errors, touched = {}, onChange, onBlur }: Pers
             />
           </Grid>
 
-          {/* Date of Birth */}
           <Grid size={{ xs: 12, md: 6 }}>
             <DatePicker
               label="Date of Birth *"

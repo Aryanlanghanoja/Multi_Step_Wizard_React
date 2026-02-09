@@ -31,19 +31,16 @@ const SelectField = ({
   validateOnChange = false,
   customValidation,
 }: SelectFieldProps) => {
-  // Find the selected option based on value
   const selectedOption = options.find(opt => opt.value === value || opt.label === value) || null;
 
   const isSuccess = success && !error;
 
-  // Determine the helper text - priority: error > success > helperText
   const getHelperText = () => {
     if (error) return error;
     if (isSuccess) return 'No error found';
     return helperText;
   };
 
-  // Determine the color based on error/success state
   const getFieldColor = () => {
     if (error) return 'error';
     if (isSuccess) return 'success';
@@ -54,7 +51,6 @@ const SelectField = ({
     const selectedValue = newValue?.value || newValue?.label || '';
     onChange(selectedValue);
 
-    // Validate on change if enabled
     if (validateOnChange && onBlur) {
       if (customValidation) {
         customValidation(selectedValue);

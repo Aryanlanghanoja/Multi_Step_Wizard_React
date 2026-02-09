@@ -37,7 +37,6 @@ export const DEGREE_OPTIONS: string[] = [
   'PhD',
 ];
 
-// Generate years for dropdowns (from 1970 to current year + 5)
 const currentYear = new Date().getFullYear();
 export const YEAR_OPTIONS: string[] = Array.from(
   { length: currentYear - 1970 + 6 },

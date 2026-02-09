@@ -152,7 +152,9 @@ const Wizard = () => {
     try {
       await createSubmission(formData);
       setSnackbar({ open: true, message: 'Form submitted successfully!', severity: 'success' });
-      navigate('/data');
+      setTimeout(() => {
+        navigate('/data');
+      }, 500);
     } catch (error) {
       console.log(error);
       setSnackbar({ open: true, message: 'Failed to submit form. Please try again.', severity: 'error' });

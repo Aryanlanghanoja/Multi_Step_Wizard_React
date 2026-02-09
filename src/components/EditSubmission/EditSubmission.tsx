@@ -132,9 +132,7 @@ const EditSubmission = () => {
 
   const handlePersonalInfoBlur = (field: string) => {
     if (!formData) return;
-    // Re-validate the specific field on blur
     const fieldErrors = validatePersonalInfo(formData.personalInfo);
-    // Only update if there's an error for this field
     if (fieldErrors[field as keyof typeof fieldErrors]) {
       setErrors(prev => ({
         ...prev,
