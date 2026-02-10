@@ -1,4 +1,3 @@
-// Personal Information Types
 export interface PersonalInfo {
   firstName: string;
   middleName: string;
@@ -7,11 +6,11 @@ export interface PersonalInfo {
   phoneNumber: string;
   email: string;
   dateOfBirth: string;
+  about: string;
 }
 
-
-export type BoardType = 'ICSE' | 'CBSE' | 'State Board' | '';
-export type EducationType = 'Diploma' | '12th';
+export type BoardType = "ICSE" | "CBSE" | "State Board" | "";
+export type EducationType = "Diploma" | "12th";
 
 export interface TenthDetails {
   passYear: string;
@@ -44,7 +43,7 @@ export interface EducationInfo {
   graduation: GraduationDetails;
 }
 
-export type JobType = 'Full Time' | 'Part Time' | 'Internship' | '';
+export type JobType = "Full Time" | "Part Time" | "Internship" | "";
 
 export interface JobEntry {
   id: string;
@@ -81,6 +80,7 @@ export interface PersonalInfoErrors {
   phoneNumber?: string;
   email?: string;
   dateOfBirth?: string;
+  about?: string;
 }
 
 export interface EducationInfoErrors {

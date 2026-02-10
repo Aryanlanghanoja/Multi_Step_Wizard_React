@@ -48,18 +48,16 @@ interface WorkExperienceStepProps {
   onBlur: (field: keyof WorkExperience) => void;
 }
 
-// Utility function to parse date in either YYYY-MM-DD or DD/MM/YYYY format
 const parseDate = (dateString: string): Dayjs | null => {
   if (!dateString) return null;
-  // Try DD/MM/YYYY first (new format)
   if (dayjs(dateString, 'DD/MM/YYYY', true).isValid()) {
     return dayjs(dateString, 'DD/MM/YYYY');
   }
-  // Fall back to YYYY-MM-DD (old format for existing data)
+
   if (dayjs(dateString, 'YYYY-MM-DD', true).isValid()) {
     return dayjs(dateString, 'YYYY-MM-DD');
   }
-  // Try default parsing
+
   return dayjs(dateString);
 };
 
@@ -77,13 +75,14 @@ const WorkExperienceStep = ({
 }: WorkExperienceStepProps) => {
   const handleDateChange = (field: keyof WorkExperience, date: Dayjs | null) => {
     onChange(field, date ? date.format('DD/MM/YYYY') : '');
+    onBlur(field);
   };
 
   const handleJobDateChange = (jobId: string, field: 'startDate' | 'endDate', date: Dayjs | null) => {
     onJobChange(jobId, field, date ? date.format('DD/MM/YYYY') : '');
+    onJobBlur(jobId, field);
   };
 
-  // Validation helper functions
   const validateRequired = (value: string): string | undefined => {
     if (!value || (typeof value === 'string' && !value.trim())) {
       return 'This field is required';
@@ -97,7 +96,6 @@ const WorkExperienceStep = ({
     return undefined;
   };
 
-  // Helper to determine if field should show success state
   const isSuccess = (field: string): boolean => {
     if (touched && typeof touched[field as keyof typeof touched] === 'boolean') {
       return !!touched[field as keyof typeof touched] && !(errors as unknown as Record<string, unknown>)?.[field];
@@ -105,7 +103,6 @@ const WorkExperienceStep = ({
     return false;
   };
 
-  // Helper to determine if job field should show success state
   const isJobSuccess = (jobId: string, field: string): boolean => {
     return !!(touched?.jobs?.[jobId]?.[field]) && !(errors.jobs?.[jobId] as unknown as Record<string, unknown>)?.[field];
   };
@@ -113,7 +110,6 @@ const WorkExperienceStep = ({
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Box sx={{ mt: 2 }}>
-        {/* Total Experience */}
         <Grid container spacing={3}>
           <Grid size={{ xs: 12, md: 6 }}>
             <InputField
@@ -135,7 +131,6 @@ const WorkExperienceStep = ({
 
         <Divider sx={{ my: 3 }} />
 
-        {/* Skills */}
         <Typography variant="h6" gutterBottom>
           Skills
         </Typography>
@@ -143,7 +138,6 @@ const WorkExperienceStep = ({
           <Grid size={{ xs: 12 }}>
             <Autocomplete
               multiple
-              freeSolo
               options={SKILLS_OPTIONS}
               value={data.skills}
               onChange={(_, newValue) => onSkillsChange(newValue)}
@@ -156,8 +150,8 @@ const WorkExperienceStep = ({
                 <TextField
                   {...params}
                   label="Skills"
-                  placeholder="Add skills..."
-                  helperText="Select from the list or type to add custom skills"
+                  placeholder="Select skills..."
+                  helperText="Select skills from the list"
                 />
               )}
             />
@@ -166,7 +160,6 @@ const WorkExperienceStep = ({
 
         <Divider sx={{ my: 3 }} />
 
-        {/* Job Entries */}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
           <Typography variant="h6">Job / Internship Details</Typography>
           <Button
@@ -203,13 +196,15 @@ const WorkExperienceStep = ({
                   onChange={(date) => handleJobDateChange(job.id, 'startDate', date)}
                   format="DD/MM/YYYY"
                   onClose={() => onJobBlur(job.id, 'startDate')}
-                  slotProps={{
-                    textField: {
-                      fullWidth: true,
-                      error: !!errors.jobs?.[job.id]?.startDate,
-                      helperText: errors.jobs?.[job.id]?.startDate,
-                    },
-                  }}
+              slotProps={{
+                textField: {
+                  fullWidth: true,
+                  error: !!errors.jobs?.[job.id]?.startDate,
+                  helperText: errors.jobs?.[job.id]?.startDate,
+                  color: isJobSuccess(job.id, 'startDate') ? 'success' : undefined,
+                  onBlur: () => onJobBlur(job.id, 'startDate'),
+                },
+              }}
                 />
               </Grid>
 
@@ -288,7 +283,6 @@ const WorkExperienceStep = ({
 
         <Divider sx={{ my: 3 }} />
 
-        {/* CTC and Available From */}
         <Typography variant="h6" gutterBottom>
           Compensation & Availability
         </Typography>
@@ -336,6 +330,8 @@ const WorkExperienceStep = ({
                   fullWidth: true,
                   error: !!errors.availableFrom,
                   helperText: errors.availableFrom,
+                  color: isSuccess('availableFrom') ? 'success' : undefined,
+                  onBlur: () => onBlur('availableFrom'),
                 },
               }}
             />

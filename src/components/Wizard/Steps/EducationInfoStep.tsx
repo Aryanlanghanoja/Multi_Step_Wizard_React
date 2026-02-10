@@ -10,7 +10,7 @@ import {
   Divider,
 } from '@mui/material';
 import type { EducationInfo, EducationInfoErrors, EducationType } from '../../../types';
-import { BOARD_OPTIONS, YEAR_OPTIONS, DEGREE_OPTIONS } from '../../../utils/constants';
+import { BOARD_OPTIONS, DEGREE_OPTIONS, generateYearOptions } from '../../../utils/constants';
 import InputField from '../../InputField/InputField';
 import SelectField from '../../InputField/SelectField';
 
@@ -21,6 +21,7 @@ interface EducationInfoStepProps {
   onChange: (section: string, field: string, value: string) => void;
   onBlur: (section: string, field: string) => void;
   onEducationTypeChange: (type: EducationType) => void;
+  birthYear?: string;
 }
 
 const EducationInfoStep = ({
@@ -30,6 +31,7 @@ const EducationInfoStep = ({
   onChange,
   onBlur,
   onEducationTypeChange,
+  birthYear,
 }: EducationInfoStepProps) => {
 
   const validateRequired = (value: string): string | undefined => {
@@ -40,7 +42,7 @@ const EducationInfoStep = ({
   };
 
   const isSuccess = (section: string, field: string): boolean => {
-    return !!touched[section]?.[field] && !(errors as any)?.[section]?.[field];
+    return !!touched[section]?.[field] && !(errors as Record<string, Record<string, string | undefined>>)?.[section]?.[field];
   };
 
   return (
@@ -52,7 +54,7 @@ const EducationInfoStep = ({
         <Grid size={{ xs: 12, md: 6 }}>
           <SelectField
             label="Pass Year"
-            options={YEAR_OPTIONS.map(opt => ({ label: opt, value: opt }))}
+            options={generateYearOptions(birthYear).map(opt => ({ label: opt, value: opt }))}
             value={data.tenth.passYear || null}
             onChange={(value) => onChange('tenth', 'passYear', value)}
             error={errors.tenth?.passYear}
@@ -100,7 +102,7 @@ const EducationInfoStep = ({
             <Grid size={{ xs: 12, md: 6 }}>
               <SelectField
                 label="Pass Year"
-                options={YEAR_OPTIONS.map(opt => ({ label: opt, value: opt }))}
+                options={generateYearOptions(birthYear).map(opt => ({ label: opt, value: opt }))}
                 value={data.twelfth.passYear || null}
                 onChange={(value) => onChange('twelfth', 'passYear', value)}
                 error={errors.twelfth?.passYear}
@@ -136,7 +138,7 @@ const EducationInfoStep = ({
             <Grid size={{ xs: 12, md: 4 }}>
               <SelectField
                 label="Passing Year"
-                options={YEAR_OPTIONS.map(opt => ({ label: opt, value: opt }))}
+                options={generateYearOptions(birthYear).map(opt => ({ label: opt, value: opt }))}
                 value={data.diploma.passYear || null}
                 onChange={(value) => onChange('diploma', 'passYear', value)}
                 error={errors.diploma?.passYear}
@@ -185,7 +187,7 @@ const EducationInfoStep = ({
         <Grid size={{ xs: 12, md: 6 }}>
           <SelectField
             label="Completion Year"
-            options={YEAR_OPTIONS.map(opt => ({ label: opt, value: opt }))}
+            options={generateYearOptions(birthYear).map(opt => ({ label: opt, value: opt }))}
             value={data.graduation.completionYear || null}
             onChange={(value) => onChange('graduation', 'completionYear', value)}
             error={errors.graduation?.completionYear}

@@ -1,4 +1,4 @@
-import { Box, Grid } from '@mui/material';
+import { Box, Grid, TextField } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -11,16 +11,8 @@ import SelectField from '../../InputField/SelectField';
 
 dayjs.extend(customParseFormat);
 
-interface PersonalInfoStepProps {
-  data: PersonalInfo;
-  errors: PersonalInfoErrors;
-  touched?: Record<string, boolean>;
-  onChange: (field: keyof PersonalInfo, value: string) => void;
-  onBlur: (field: keyof PersonalInfo) => void;
-}
-
-const parseDate = (dateString: string): Dayjs | undefined => {
-  if (!dateString) return undefined;
+const parseDate = (dateString: string): Dayjs | null => {
+  if (!dateString) return null;
   if (dayjs(dateString, 'DD/MM/YYYY', true).isValid()) {
     return dayjs(dateString, 'DD/MM/YYYY');
   }
@@ -31,6 +23,14 @@ const parseDate = (dateString: string): Dayjs | undefined => {
 
   return dayjs(dateString);
 };
+
+interface PersonalInfoStepProps {
+  data: PersonalInfo;
+  errors: PersonalInfoErrors;
+  touched?: Record<string, boolean>;
+  onChange: (field: keyof PersonalInfo, value: string) => void;
+  onBlur: (field: keyof PersonalInfo) => void;
+}
 
 const PersonalInfoStep = ({ data, errors, touched = {}, onChange, onBlur }: PersonalInfoStepProps) => {
   const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -60,6 +60,7 @@ const PersonalInfoStep = ({ data, errors, touched = {}, onChange, onBlur }: Pers
 
   const handleDateChange = (date: Dayjs | null) => {
     onChange('dateOfBirth', date ? date.format('DD/MM/YYYY') : '');
+    onBlur('dateOfBirth');
   };
 
   return (
@@ -103,7 +104,7 @@ const PersonalInfoStep = ({ data, errors, touched = {}, onChange, onBlur }: Pers
               onBlur={() => onBlur('lastName')}
               error={errors.lastName}
               success={isSuccess('lastName')}
-              required
+              required 
               tooltip="Enter your last name (alphabets only)"
               validateOnChange
               immediateValidation={validateName}
@@ -173,14 +174,32 @@ const PersonalInfoStep = ({ data, errors, touched = {}, onChange, onBlur }: Pers
               shouldDisableDate={(date) =>
                 date.isSame(dayjs(), 'day') || date.isAfter(dayjs())
               }
-              onClose={() => onBlur('dateOfBirth')}
               slotProps={{
                 textField: {
                   fullWidth: true,
                   error: !!errors.dateOfBirth,
                   helperText: errors.dateOfBirth,
+                  color: isSuccess('dateOfBirth') ? 'success' : undefined,
+                  onBlur: () => onBlur('dateOfBirth'),
                 },
               }}
+            />
+          </Grid>
+
+          <Grid size={{ xs: 12 }}>
+            <TextField
+              fullWidth
+              required
+              label="About"
+              multiline
+              rows={4}
+              value={data.about}
+              onChange={(e) => onChange('about', e.target.value)}
+              onBlur={() => onBlur('about')}
+              error={!!errors.about}
+              helperText={errors.about || `${data.about?.length || 0}/500 characters`}
+              color={isSuccess('about') ? 'success' : undefined}
+              inputProps={{ maxLength: 500 }}
             />
           </Grid>
         </Grid>

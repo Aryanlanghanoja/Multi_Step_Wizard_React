@@ -30,22 +30,20 @@ import styles from './ViewSubmission.module.css';
 
 dayjs.extend(customParseFormat);
 
-// Utility function to parse date in either YYYY-MM-DD, DD/MM/YYYY, or ISO format
 const parseDateString = (dateString: string): dayjs.Dayjs | null => {
   if (!dateString) return null;
-  // Try ISO format first (for createdAt/updatedAt fields)
   if (dayjs(dateString).isValid() && dateString.includes('T')) {
     return dayjs(dateString);
   }
-  // Try DD/MM/YYYY first (new format)
+
   if (dayjs(dateString, 'DD/MM/YYYY', true).isValid()) {
     return dayjs(dateString, 'DD/MM/YYYY');
   }
-  // Fall back to YYYY-MM-DD (old format for existing data)
+
   if (dayjs(dateString, 'YYYY-MM-DD', true).isValid()) {
     return dayjs(dateString, 'YYYY-MM-DD');
   }
-  // Try default parsing
+
   return dayjs(dateString);
 };
 
@@ -172,7 +170,6 @@ const ViewSubmission = () => {
 
         <Divider sx={{ my: 3 }} />
 
-        {/* Personal Information Section */}
         <Box className={styles.section}>
           <Box display="flex" alignItems="center" gap={1} mb={2}>
             <PersonIcon color="primary" />
@@ -236,7 +233,6 @@ const ViewSubmission = () => {
           </Card>
         </Box>
 
-        {/* Education Details Section */}
         <Box className={styles.section}>
           <Box display="flex" alignItems="center" gap={1} mb={2}>
             <SchoolIcon color="primary" />
@@ -246,7 +242,6 @@ const ViewSubmission = () => {
           </Box>
           <Card variant="outlined">
             <CardContent>
-              {/* 10th Details */}
               <Typography variant="subtitle1" fontWeight={600} gutterBottom>
                 10th Standard
               </Typography>
@@ -274,7 +269,6 @@ const ViewSubmission = () => {
 
               <Divider sx={{ my: 2 }} />
 
-              {/* 12th or Diploma */}
               {submission.educationInfo.educationType === '12th' ? (
                 <>
                   <Typography variant="subtitle1" fontWeight={600} gutterBottom>
@@ -338,7 +332,6 @@ const ViewSubmission = () => {
 
               <Divider sx={{ my: 2 }} />
 
-              {/* Graduation Details */}
               <Typography variant="subtitle1" fontWeight={600} gutterBottom>
                 Graduation
               </Typography>
@@ -383,7 +376,6 @@ const ViewSubmission = () => {
           </Card>
         </Box>
 
-        {/* Work Experience Section */}
         <Box className={styles.section}>
           <Box display="flex" alignItems="center" gap={1} mb={2}>
             <WorkIcon color="primary" />
@@ -441,10 +433,10 @@ const ViewSubmission = () => {
                           <Typography variant="subtitle1" fontWeight={600} color="primary">
                             Job #{index + 1}
                           </Typography>
-                          <Chip 
-                            label={job.type} 
-                            size="small" 
-                            color="info" 
+                          <Chip
+                            label={job.type}
+                            size="small"
+                            color="info"
                             variant="outlined"
                           />
                         </Box>
@@ -479,11 +471,24 @@ const ViewSubmission = () => {
                   ))}
                 </>
               )}
+
+              {submission.workExperience.skills.length > 0 && (
+                <>
+                  <Divider sx={{ my: 2 }} />
+                  <Typography variant="subtitle1" fontWeight={600} gutterBottom>
+                    Skills
+                  </Typography>
+                  <ul style={{ paddingLeft: '20px' }}>
+                    {submission.workExperience.skills.map((skill, index) => (
+                      <li key={index}>{skill}</li>
+                    ))}
+                  </ul>
+                </>
+              )}
             </CardContent>
           </Card>
         </Box>
 
-        {/* Footer Actions */}
         <Box className={styles.actions} sx={{ mt: 4, justifyContent: 'center' }}>
           <Button
             variant="outlined"

@@ -264,7 +264,6 @@ const EditSubmission = () => {
     const job = formData.workExperience.jobs.find(j => j.id === jobId);
     if (!job) return;
 
-    // Validate the specific field
     let error: string | undefined;
     switch (field) {
       case 'startDate':

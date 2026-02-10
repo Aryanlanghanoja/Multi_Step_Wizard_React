@@ -1,38 +1,38 @@
-import type { FormData } from '../types';
-import dayjs from 'dayjs';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
+import type { FormData } from "../types";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 
 dayjs.extend(customParseFormat);
 
 const parseDateString = (dateString: string): dayjs.Dayjs | null => {
   if (!dateString) return null;
-  if (dayjs(dateString).isValid() && dateString.includes('T')) {
+  if (dayjs(dateString).isValid() && dateString.includes("T")) {
     return dayjs(dateString);
   }
 
-  if (dayjs(dateString, 'DD/MM/YYYY', true).isValid()) {
-    return dayjs(dateString, 'DD/MM/YYYY');
+  if (dayjs(dateString, "DD/MM/YYYY", true).isValid()) {
+    return dayjs(dateString, "DD/MM/YYYY");
   }
 
-  if (dayjs(dateString, 'YYYY-MM-DD', true).isValid()) {
-    return dayjs(dateString, 'YYYY-MM-DD');
+  if (dayjs(dateString, "YYYY-MM-DD", true).isValid()) {
+    return dayjs(dateString, "YYYY-MM-DD");
   }
 
   return dayjs(dateString);
 };
 
 export const printSubmission = (submission: FormData): void => {
-  const printWindow = window.open('', '_blank');
+  const printWindow = window.open("", "_blank");
   if (!printWindow) {
-    alert('Please allow popups to print the form');
+    alert("Please allow popups to print the form");
     return;
   }
 
   const formatDate = (dateString: string): string => {
-    if (!dateString) return 'N/A';
+    if (!dateString) return "N/A";
     const parsed = parseDateString(dateString);
-    if (!parsed) return 'Invalid Date';
-    return parsed.format('DD/MM/YYYY');
+    if (!parsed) return "Invalid Date";
+    return parsed.format("DD/MM/YYYY");
   };
 
   const htmlContent = `
@@ -156,7 +156,7 @@ export const printSubmission = (submission: FormData): void => {
     <body>
       <div class="header">
         <h1>Form Submission Details</h1>
-        <p>ID: ${submission.id || 'N/A'} | Created: ${submission.createdAt ? formatDate(submission.createdAt) : 'N/A'}</p>
+        <p>ID: ${submission.id || "N/A"} | Created: ${submission.createdAt ? formatDate(submission.createdAt) : "N/A"}</p>
       </div>
 
       <!-- Personal Information -->
@@ -165,23 +165,23 @@ export const printSubmission = (submission: FormData): void => {
         <div class="field-grid">
           <div class="field">
             <div class="field-label">First Name</div>
-            <div class="field-value">${submission.personalInfo.firstName || 'N/A'}</div>
+            <div class="field-value">${submission.personalInfo.firstName || "N/A"}</div>
           </div>
           <div class="field">
             <div class="field-label">Last Name</div>
-            <div class="field-value">${submission.personalInfo.lastName || 'N/A'}</div>
+            <div class="field-value">${submission.personalInfo.lastName || "N/A"}</div>
           </div>
           <div class="field">
             <div class="field-label">Middle Name</div>
-            <div class="field-value">${submission.personalInfo.middleName || 'N/A'}</div>
+            <div class="field-value">${submission.personalInfo.middleName || "N/A"}</div>
           </div>
           <div class="field">
             <div class="field-label">Phone Number</div>
-            <div class="field-value">${submission.personalInfo.countryCode} ${submission.personalInfo.phoneNumber || 'N/A'}</div>
+            <div class="field-value">${submission.personalInfo.countryCode} ${submission.personalInfo.phoneNumber || "N/A"}</div>
           </div>
           <div class="field">
             <div class="field-label">Email Address</div>
-            <div class="field-value">${submission.personalInfo.email || 'N/A'}</div>
+            <div class="field-value">${submission.personalInfo.email || "N/A"}</div>
           </div>
           <div class="field">
             <div class="field-label">Date of Birth</div>
@@ -199,67 +199,71 @@ export const printSubmission = (submission: FormData): void => {
           <div class="field-grid">
             <div class="field">
               <div class="field-label">Pass Year</div>
-              <div class="field-value">${submission.educationInfo.tenth.passYear || 'N/A'}</div>
+              <div class="field-value">${submission.educationInfo.tenth.passYear || "N/A"}</div>
             </div>
             <div class="field">
               <div class="field-label">Board</div>
-              <div class="field-value">${submission.educationInfo.tenth.board || 'N/A'}</div>
+              <div class="field-value">${submission.educationInfo.tenth.board || "N/A"}</div>
             </div>
           </div>
         </div>
 
-        ${submission.educationInfo.educationType === '12th' ? `
+        ${
+          submission.educationInfo.educationType === "12th"
+            ? `
         <div style="margin-bottom: 20px;">
           <div style="font-weight: 600; color: #666; margin-bottom: 10px;">12th Standard</div>
           <div class="field-grid">
             <div class="field">
               <div class="field-label">Pass Year</div>
-              <div class="field-value">${submission.educationInfo.twelfth.passYear || 'N/A'}</div>
+              <div class="field-value">${submission.educationInfo.twelfth.passYear || "N/A"}</div>
             </div>
             <div class="field">
               <div class="field-label">Board</div>
-              <div class="field-value">${submission.educationInfo.twelfth.board || 'N/A'}</div>
+              <div class="field-value">${submission.educationInfo.twelfth.board || "N/A"}</div>
             </div>
           </div>
         </div>
-        ` : `
+        `
+            : `
         <div style="margin-bottom: 20px;">
           <div style="font-weight: 600; color: #666; margin-bottom: 10px;">Diploma</div>
           <div class="field-grid">
             <div class="field">
               <div class="field-label">Passing Year</div>
-              <div class="field-value">${submission.educationInfo.diploma.passYear || 'N/A'}</div>
+              <div class="field-value">${submission.educationInfo.diploma.passYear || "N/A"}</div>
             </div>
             <div class="field">
               <div class="field-label">Organization</div>
-              <div class="field-value">${submission.educationInfo.diploma.organization || 'N/A'}</div>
+              <div class="field-value">${submission.educationInfo.diploma.organization || "N/A"}</div>
             </div>
             <div class="field">
               <div class="field-label">Major</div>
-              <div class="field-value">${submission.educationInfo.diploma.major || 'N/A'}</div>
+              <div class="field-value">${submission.educationInfo.diploma.major || "N/A"}</div>
             </div>
           </div>
         </div>
-        `}
+        `
+        }
 
         <div>
           <div style="font-weight: 600; color: #666; margin-bottom: 10px;">Graduation</div>
           <div class="field-grid">
             <div class="field">
               <div class="field-label">Completion Year</div>
-              <div class="field-value">${submission.educationInfo.graduation.completionYear || 'N/A'}</div>
+              <div class="field-value">${submission.educationInfo.graduation.completionYear || "N/A"}</div>
             </div>
             <div class="field">
               <div class="field-label">Organization/University</div>
-              <div class="field-value">${submission.educationInfo.graduation.organization || 'N/A'}</div>
+              <div class="field-value">${submission.educationInfo.graduation.organization || "N/A"}</div>
             </div>
             <div class="field">
               <div class="field-label">Degree</div>
-              <div class="field-value">${submission.educationInfo.graduation.degree || 'N/A'}</div>
+              <div class="field-value">${submission.educationInfo.graduation.degree || "N/A"}</div>
             </div>
             <div class="field">
               <div class="field-label">Major/Specialization</div>
-              <div class="field-value">${submission.educationInfo.graduation.major || 'N/A'}</div>
+              <div class="field-value">${submission.educationInfo.graduation.major || "N/A"}</div>
             </div>
           </div>
         </div>
@@ -272,15 +276,15 @@ export const printSubmission = (submission: FormData): void => {
         <div class="field-grid" style="margin-bottom: 20px;">
           <div class="field">
             <div class="field-label">Total Experience</div>
-            <div class="field-value">${submission.workExperience.totalExperience || '0'} Years</div>
+            <div class="field-value">${submission.workExperience.totalExperience || "0"} Years</div>
           </div>
           <div class="field">
             <div class="field-label">Current CTC</div>
-            <div class="field-value">${submission.workExperience.currentCTC || 'N/A'} LPA</div>
+            <div class="field-value">${submission.workExperience.currentCTC || "N/A"} LPA</div>
           </div>
           <div class="field">
             <div class="field-label">Expected CTC</div>
-            <div class="field-value">${submission.workExperience.expectedCTC || 'N/A'} LPA</div>
+            <div class="field-value">${submission.workExperience.expectedCTC || "N/A"} LPA</div>
           </div>
           <div class="field">
             <div class="field-label">Available From</div>
@@ -288,24 +292,33 @@ export const printSubmission = (submission: FormData): void => {
           </div>
         </div>
 
-        ${submission.workExperience.skills && submission.workExperience.skills.length > 0 ? `
+        ${
+          submission.workExperience.skills &&
+          submission.workExperience.skills.length > 0
+            ? `
         <div style="margin-bottom: 20px;">
           <div style="font-weight: 600; color: #666; margin-bottom: 10px;">Skills</div>
-          <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-            ${submission.workExperience.skills.map(skill => `<span style="background: #e3f2fd; color: #1976d2; padding: 4px 8px; border-radius: 4px; font-size: 12px; border: 1px solid #bbdefb;">${skill}</span>`).join('')}
-          </div>
+          <ul style="padding-left: 20px;">
+            ${submission.workExperience.skills.map((skill) => `<li>${skill}</li>`).join("")}
+          </ul>
         </div>
-        ` : ''}
+        `
+            : ""
+        }
 
-        ${submission.workExperience.jobs.length > 0 ? `
+        ${
+          submission.workExperience.jobs.length > 0
+            ? `
         <div style="font-weight: 600; color: #666; margin-bottom: 15px;">Job/Internship Details</div>
-        ${submission.workExperience.jobs.map((job, index) => `
+        ${submission.workExperience.jobs
+          .map(
+            (job, index) => `
         <div class="job-card">
-          <div class="job-header">Job #${index + 1} - ${job.designation || 'N/A'}</div>
+          <div class="job-header">Job #${index + 1} - ${job.designation || "N/A"}</div>
           <div class="field-grid">
             <div class="field">
               <div class="field-label">Type</div>
-              <div class="field-value">${job.type || 'N/A'}</div>
+              <div class="field-value">${job.type || "N/A"}</div>
             </div>
             <div class="field">
               <div class="field-label">Duration</div>
@@ -313,12 +326,16 @@ export const printSubmission = (submission: FormData): void => {
             </div>
             <div class="field full-width">
               <div class="field-label">Description</div>
-              <div class="field-value">${job.description || 'N/A'}</div>
+              <div class="field-value">${job.description || "N/A"}</div>
             </div>
           </div>
         </div>
-        `).join('')}
-        ` : '<p style="color: #999; font-style: italic;">No job entries provided</p>'}
+        `,
+          )
+          .join("")}
+        `
+            : '<p style="color: #999; font-style: italic;">No job entries provided</p>'
+        }
       </div>
 
       <div class="footer">

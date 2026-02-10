@@ -71,7 +71,6 @@ const InputField = ({
 
   const getHelperText = () => {
     if (error) return error;
-    if (isSuccess) return 'No error found';
     return helperText;
   };
 

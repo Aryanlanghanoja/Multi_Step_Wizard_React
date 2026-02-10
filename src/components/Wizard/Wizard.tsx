@@ -11,6 +11,7 @@ import {
   Snackbar,
   Alert,
 } from '@mui/material';
+import dayjs from 'dayjs';
 import type { FormData, FormErrors } from '../../types';
 import { STEPS } from '../../utils/constants';
 import { validateForm, validateStep, validatePersonalInfo, validateWorkExperience, validateEducationInfo } from '../../utils/validation';
@@ -30,6 +31,7 @@ const initialFormData: FormData = {
     phoneNumber: '',
     email: '',
     dateOfBirth: '',
+    about: '',
   },
   educationInfo: {
     tenth: {
@@ -63,7 +65,6 @@ const initialFormData: FormData = {
   },
 };
 
-// Define proper types for touched state
 interface TouchedPersonalInfo {
   [key: string]: boolean;
 }
@@ -164,29 +165,33 @@ const Wizard = () => {
   };
 
   const handlePersonalInfoChange = (field: string, value: string) => {
+    const updatedPersonalInfo = {
+      ...formData.personalInfo,
+      [field]: value,
+    };
+    const fieldErrors = validatePersonalInfo(updatedPersonalInfo);
+
     setFormData(prev => ({
       ...prev,
-      personalInfo: {
-        ...prev.personalInfo,
-        [field]: value,
-      },
+      personalInfo: updatedPersonalInfo,
     }));
 
-    // Validate on change - only update if field has an error
-    const fieldErrors = validatePersonalInfo(formData.personalInfo);
-    if (fieldErrors[field as keyof typeof fieldErrors]) {
-      setErrors(prev => ({
+    setErrors(prev => {
+      const newPersonalInfoErrors = { ...prev.personalInfo };
+      const error = fieldErrors[field as keyof typeof fieldErrors];
+      if (error) {
+        newPersonalInfoErrors[field as keyof typeof newPersonalInfoErrors] = error;
+      } else {
+        delete newPersonalInfoErrors[field as keyof typeof newPersonalInfoErrors];
+      }
+      return {
         ...prev,
-        personalInfo: {
-          ...prev.personalInfo,
-          [field]: fieldErrors[field as keyof typeof fieldErrors],
-        },
-      }));
-    }
+        personalInfo: newPersonalInfoErrors,
+      };
+    });
   };
 
   const handlePersonalInfoBlur = (field: string) => {
-    // Mark field as touched
     setTouched(prev => ({
       ...prev,
       personalInfo: {
@@ -195,9 +200,7 @@ const Wizard = () => {
       },
     }));
 
-    // Re-validate the specific field on blur
     const fieldErrors = validatePersonalInfo(formData.personalInfo);
-    // Update error state based on validation result
     setErrors(prev => ({
       ...prev,
       personalInfo: {
@@ -225,7 +228,6 @@ const Wizard = () => {
       };
     });
 
-    // Validate on change - update error state for the specific field
     const fieldErrors = validateEducationInfo(formData.educationInfo);
     const sectionFieldError = (fieldErrors as Record<string, Record<string, string | undefined>>)?.[section]?.[field];
     
@@ -244,7 +246,6 @@ const Wizard = () => {
   };
 
   const handleEducationBlur = (section: string, field: string) => {
-    // Mark field as touched
     setTouched(prev => ({
       ...prev,
       educationInfo: {
@@ -256,7 +257,6 @@ const Wizard = () => {
       },
     }));
 
-    // Validate on blur
     const fieldErrors = validateEducationInfo(formData.educationInfo);
     const sectionFieldError = (fieldErrors as Record<string, Record<string, string | undefined>>)?.[section]?.[field];
     
@@ -291,7 +291,6 @@ const Wizard = () => {
       },
     }));
 
-    // Validate on change - only update if field has an error
     const fieldErrors = validateWorkExperience(formData.workExperience);
     if (fieldErrors[field as keyof typeof fieldErrors]) {
       setErrors(prev => ({
@@ -315,7 +314,6 @@ const Wizard = () => {
   };
 
   const handleWorkExperienceBlur = (field: string) => {
-    // Mark field as touched
     setTouched(prev => ({
       ...prev,
       workExperience: {
@@ -324,9 +322,7 @@ const Wizard = () => {
       },
     }));
 
-    // Re-validate the specific field on blur
     const fieldErrors = validateWorkExperience(formData.workExperience);
-    // Update error state based on validation result
     setErrors(prev => ({
       ...prev,
       workExperience: {
@@ -347,7 +343,6 @@ const Wizard = () => {
       },
     }));
 
-    // Validate on change for job fields
     const fieldErrors = validateWorkExperience(formData.workExperience);
     const jobFieldError = fieldErrors.jobs?.[jobId]?.[field as keyof typeof fieldErrors.jobs[typeof jobId]];
     
@@ -369,7 +364,6 @@ const Wizard = () => {
   };
 
   const handleJobBlur = (jobId: string, field: string) => {
-    // Mark job field as touched
     setTouched(prev => ({
       ...prev,
       workExperience: {
@@ -384,7 +378,6 @@ const Wizard = () => {
       },
     }));
 
-    // Re-validate the specific field on blur
     const fieldErrors = validateWorkExperience(formData.workExperience);
     const jobFieldError = fieldErrors.jobs?.[jobId]?.[field as keyof typeof fieldErrors.jobs[typeof jobId]];
     
@@ -444,6 +437,7 @@ const Wizard = () => {
             onChange={handleEducationChange}
             onBlur={handleEducationBlur}
             onEducationTypeChange={handleEducationTypeChange}
+            birthYear={formData.personalInfo.dateOfBirth ? dayjs(formData.personalInfo.dateOfBirth, 'DD/MM/YYYY').year().toString() : undefined}
           />
         );
       case 2:

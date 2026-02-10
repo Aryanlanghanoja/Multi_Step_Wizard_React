@@ -34,9 +34,9 @@ import styles from './DataList.module.css';
 
 const DataList = () => {
   const [submissions, setSubmissions] = useState<FormData[]>([]);
-  const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; id: string | null }>({
+  const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; submission: FormData | null }>({
     open: false,
-    id: null,
+    submission: null,
   });
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' as 'success' | 'error' });
   const navigate = useNavigate();
@@ -51,7 +51,16 @@ const DataList = () => {
   };
 
   useEffect(() => {
-    loadSubmissions();
+    const fetchSubmissions = async () => {
+      try {
+        const data = await getAllSubmissions();
+        setSubmissions(data);
+      } catch {
+        setSnackbar({ open: true, message: 'Failed to load submissions.', severity: 'error' });
+      }
+    };
+
+    fetchSubmissions();
   }, []);
 
   const handleView = (id: string) => {
@@ -66,26 +75,26 @@ const DataList = () => {
     printSubmission(submission);
   };
 
-  const handleDeleteClick = (id: string) => {
-    setDeleteDialog({ open: true, id });
+  const handleDeleteClick = (submission: FormData) => {
+    setDeleteDialog({ open: true, submission });
   };
 
   const handleDeleteConfirm = async () => {
-    if (!deleteDialog.id) return;
+    if (!deleteDialog.submission) return;
 
     try {
-      await deleteSubmission(deleteDialog.id);
-      setSubmissions(prev => prev.filter(sub => sub.id !== deleteDialog.id));
+      await deleteSubmission(deleteDialog.submission.id!);
+      setSubmissions(prev => prev.filter(sub => sub.id !== deleteDialog.submission!.id));
       setSnackbar({ open: true, message: 'Form deleted successfully.', severity: 'success' });
     } catch (error) {
       console.log(error)
       setSnackbar({ open: true, message: 'Failed to delete submission.', severity: 'error' });
     }
-    setDeleteDialog({ open: false, id: null });
+    setDeleteDialog({ open: false, submission: null });
   };
 
   const handleDeleteCancel = () => {
-    setDeleteDialog({ open: false, id: null });
+    setDeleteDialog({ open: false, submission: null });
   };
 
   return (
@@ -157,7 +166,7 @@ const DataList = () => {
                       <Tooltip title="Delete">
                         <IconButton
                           color="error"
-                          onClick={() => handleDeleteClick(submission.id!)}
+                          onClick={() => handleDeleteClick(submission)}
                           size="small"
                         >
                           <DeleteIcon />
@@ -172,25 +181,27 @@ const DataList = () => {
         )}
       </Paper>
 
-      <Dialog
-        open={deleteDialog.open}
-        onClose={handleDeleteCancel}
-        aria-labelledby="delete-dialog-title"
-        aria-describedby="delete-dialog-description"
-      >
-        <DialogTitle id="delete-dialog-title">Confirm Delete</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="delete-dialog-description">
-            Are you sure you want to delete this form submission? This action cannot be undone.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDeleteCancel}>Cancel</Button>
-          <Button onClick={handleDeleteConfirm} color="error" variant="contained">
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
+      {deleteDialog.open && deleteDialog.submission && (
+        <Dialog
+          open={deleteDialog.open}
+          onClose={handleDeleteCancel}
+          aria-labelledby="delete-dialog-title"
+          aria-describedby="delete-dialog-description"
+        >
+          <DialogTitle id="delete-dialog-title">Confirm Delete</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="delete-dialog-description">
+              Are you sure you want to delete the form of <b>{deleteDialog.submission.personalInfo.firstName} {deleteDialog.submission.personalInfo.lastName}</b>? This action cannot be undone.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleDeleteCancel}>Cancel</Button>
+            <Button onClick={handleDeleteConfirm} color="error" variant="contained">
+              Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
 
       <Snackbar
         open={snackbar.open}
