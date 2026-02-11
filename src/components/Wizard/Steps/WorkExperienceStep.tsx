@@ -10,19 +10,16 @@ import {
   TextField,
   Chip,
 } from '@mui/material';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import dayjs, { Dayjs } from 'dayjs';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
+import dayjs from 'dayjs';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import type { WorkExperience, WorkExperienceErrors, JobEntry } from '../../../types';
 import { JOB_TYPE_OPTIONS, SKILLS_OPTIONS } from '../../../utils/constants';
 import InputField from '../../InputField/InputField';
 import SelectField from '../../InputField/SelectField';
+import DateInput from '../../InputField/DateInput';
 
-dayjs.extend(customParseFormat);
+
 
 interface WorkExperienceStepProps {
   data: WorkExperience;
@@ -48,18 +45,18 @@ interface WorkExperienceStepProps {
   onBlur: (field: keyof WorkExperience) => void;
 }
 
-const parseDate = (dateString: string): Dayjs | null => {
-  if (!dateString) return null;
-  if (dayjs(dateString, 'DD/MM/YYYY', true).isValid()) {
-    return dayjs(dateString, 'DD/MM/YYYY');
-  }
+// const parseDate = (dateString: string): Dayjs | null => {
+//   if (!dateString) return null;
+//   if (dayjs(dateString, 'DD/MM/YYYY', true).isValid()) {
+//     return dayjs(dateString, 'DD/MM/YYYY');
+//   }
 
-  if (dayjs(dateString, 'YYYY-MM-DD', true).isValid()) {
-    return dayjs(dateString, 'YYYY-MM-DD');
-  }
+//   if (dayjs(dateString, 'YYYY-MM-DD', true).isValid()) {
+//     return dayjs(dateString, 'YYYY-MM-DD');
+//   }
 
-  return dayjs(dateString);
-};
+//   return dayjs(dateString);
+// };
 
 const WorkExperienceStep = ({
   data,
@@ -73,15 +70,7 @@ const WorkExperienceStep = ({
   onRemoveJob,
   onBlur,
 }: WorkExperienceStepProps) => {
-  const handleDateChange = (field: keyof WorkExperience, date: Dayjs | null) => {
-    onChange(field, date ? date.format('DD/MM/YYYY') : '');
-    onBlur(field);
-  };
 
-  const handleJobDateChange = (jobId: string, field: 'startDate' | 'endDate', date: Dayjs | null) => {
-    onJobChange(jobId, field, date ? date.format('DD/MM/YYYY') : '');
-    onJobBlur(jobId, field);
-  };
 
   const validateRequired = (value: string): string | undefined => {
     if (!value || (typeof value === 'string' && !value.trim())) {
@@ -108,8 +97,7 @@ const WorkExperienceStep = ({
   };
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Box sx={{ mt: 2 }}>
+    <Box sx={{ mt: 2 }}>
         <Grid container spacing={3}>
           <Grid size={{ xs: 12, md: 6 }}>
             <InputField
@@ -190,39 +178,27 @@ const WorkExperienceStep = ({
 
             <Grid container spacing={2}>
               <Grid size={{ xs: 12, md: 6 }}>
-                <DatePicker
-                  label="Start Date *"
-                  value={parseDate(job.startDate)}
-                  onChange={(date) => handleJobDateChange(job.id, 'startDate', date)}
-                  format="DD/MM/YYYY"
-                  onClose={() => onJobBlur(job.id, 'startDate')}
-              slotProps={{
-                textField: {
-                  fullWidth: true,
-                  error: !!errors.jobs?.[job.id]?.startDate,
-                  helperText: errors.jobs?.[job.id]?.startDate,
-                  color: isJobSuccess(job.id, 'startDate') ? 'success' : undefined,
-                  onBlur: () => onJobBlur(job.id, 'startDate'),
-                },
-              }}
+                <DateInput
+                  label="Start Date"
+                  value={job.startDate}
+                  error={errors.jobs?.[job.id]?.startDate}
+                  success={isJobSuccess(job.id, 'startDate')}
+                  required
+                  onChange={(value) => onJobChange(job.id, 'startDate', value)}
+                  onBlur={() => onJobBlur(job.id, 'startDate')}
                 />
               </Grid>
 
               <Grid size={{ xs: 12, md: 6 }}>
-                <DatePicker
-                  label="End Date *"
-                  value={parseDate(job.endDate)}
-                  onChange={(date) => handleJobDateChange(job.id, 'endDate', date)}
-                  minDate={job.startDate ? parseDate(job.startDate) || undefined : undefined}
-                  format="DD/MM/YYYY"
-                  onClose={() => onJobBlur(job.id, 'endDate')}
-                  slotProps={{
-                    textField: {
-                      fullWidth: true,
-                      error: !!errors.jobs?.[job.id]?.endDate,
-                      helperText: errors.jobs?.[job.id]?.endDate,
-                    },
-                  }}
+                <DateInput
+                  label="End Date"
+                  value={job.endDate}
+                  error={errors.jobs?.[job.id]?.endDate}
+                  success={isJobSuccess(job.id, 'endDate')}
+                  required
+                  onChange={(value) => onJobChange(job.id, 'endDate', value)}
+                  onBlur={() => onJobBlur(job.id, 'endDate')}
+                  minDate={job.startDate ? dayjs(job.startDate, 'DD/MM/YYYY') : undefined}
                 />
               </Grid>
 
@@ -251,6 +227,21 @@ const WorkExperienceStep = ({
                   required
                   onBlur={() => onJobBlur(job.id, 'type')}
                   validateOnChange
+                />
+              </Grid>
+
+              <Grid size={{ xs: 12 }}>
+                <InputField
+                  label="Company Name"
+                  value={job.organization}
+                  onChange={(value) => onJobChange(job.id , 'organization', value)}
+                  onBlur={() => onJobBlur(job.id , 'organization')}
+                  error={errors.jobs?.[job.id]?.organization}
+                  success={isJobSuccess(job.id , 'organization')}
+                  required
+                  tooltip="Enter the Company Name"
+                  validateOnChange
+                  immediateValidation={validateRequired}
                 />
               </Grid>
 
@@ -318,27 +309,19 @@ const WorkExperienceStep = ({
           </Grid>
 
           <Grid size={{ xs: 12, md: 4 }}>
-            <DatePicker
-              label="Available From *"
-              value={parseDate(data.availableFrom)}
-              onChange={(date) => handleDateChange('availableFrom', date)}
-              format="DD/MM/YYYY"
+            <DateInput
+              label="Available From"
+              value={data.availableFrom}
+              error={errors.availableFrom}
+              success={isSuccess('availableFrom')}
+              required
+              onChange={(value) => onChange('availableFrom', value)}
+              onBlur={() => onBlur('availableFrom')}
               minDate={dayjs().subtract(1, 'day')}
-              onClose={() => onBlur('availableFrom')}
-              slotProps={{
-                textField: {
-                  fullWidth: true,
-                  error: !!errors.availableFrom,
-                  helperText: errors.availableFrom,
-                  color: isSuccess('availableFrom') ? 'success' : undefined,
-                  onBlur: () => onBlur('availableFrom'),
-                },
-              }}
             />
           </Grid>
         </Grid>
       </Box>
-    </LocalizationProvider>
   );
 };
 

@@ -12,6 +12,7 @@ import {
   Alert,
   CircularProgress,
 } from '@mui/material';
+import dayjs from 'dayjs';
 import {
   ArrowBack as ArrowBackIcon,
   Save as SaveIcon,
@@ -333,6 +334,7 @@ const EditSubmission = () => {
             onChange={handleEducationChange}
             onBlur={() => {}}
             onEducationTypeChange={handleEducationTypeChange}
+            birthYear={formData.personalInfo.dateOfBirth ? dayjs(formData.personalInfo.dateOfBirth, 'DD/MM/YYYY').year().toString() : undefined}
           />
         );
       case 2:

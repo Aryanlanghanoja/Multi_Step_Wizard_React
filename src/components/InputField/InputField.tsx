@@ -34,36 +34,30 @@ const InputField = ({
   type = 'text',
   ...props
 }: InputFieldProps) => {
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
-    
+
     if (onChange) {
       onChange(newValue);
     }
 
-    if (immediateValidation && onBlur) {
+    if (immediateValidation) {
       immediateValidation(newValue);
-      onBlur();
+      if (onBlur) onBlur();
     }
-    
-    if (validateOnChange && onBlur && !immediateValidation) {
+
+    if (validateOnChange && !immediateValidation) {
       let validationError: string | undefined;
-      
+
       if (validationPattern && !validationPattern.test(newValue)) {
         validationError = `Invalid ${label.toLowerCase()} format`;
       } else if (customValidation) {
         validationError = customValidation(newValue);
       }
-      
-      if (validationError || (!required && newValue === '')) {
-        onBlur();
-      }
-    }
-  };
 
-  const handleBlur = () => {
-    if (onBlur) {
-      onBlur();
+      if (validationError || (!required && newValue === '')) {
+        if (onBlur) onBlur();
+      }
     }
   };
 
@@ -87,8 +81,8 @@ const InputField = ({
           fullWidth
           label={label}
           value={value}
-          onChange={handleChange}
-          onBlur={handleBlur}
+          onChange={handleInput}
+          onBlur={onBlur}
           error={!!error}
           helperText={getHelperText()}
           color={getFieldColor()}
@@ -103,8 +97,8 @@ const InputField = ({
       fullWidth
       label={label}
       value={value}
-      onChange={handleChange}
-      onBlur={handleBlur}
+      onChange={handleInput}
+      onBlur={onBlur}
       error={!!error}
       helperText={getHelperText()}
       color={getFieldColor()}

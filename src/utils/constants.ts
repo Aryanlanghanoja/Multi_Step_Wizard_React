@@ -24,18 +24,18 @@ export const JOB_TYPE_OPTIONS: JobType[] = [
 ];
 
 export const DEGREE_OPTIONS: string[] = [
-  "B.Tech",
+  "B.A.",
+  "B.Com",
   "B.E.",
   "B.Sc",
-  "B.Com",
-  "B.A.",
+  "B.Tech",
   "BBA",
   "BCA",
-  "M.Tech",
+  "M.A.",
+  "M.Com",
   "M.E.",
   "M.Sc",
-  "M.Com",
-  "M.A.",
+  "M.Tech",
   "MBA",
   "MCA",
   "PhD",
@@ -59,7 +59,7 @@ export const generateYearOptions = (birthYear?: string): string[] => {
 
   // Start from birth year + 10 (typical age for 10th standard)
   const startYear = birth;
-  const endYear = currentYear + 10;
+  const endYear = currentYear + 30;
   const length = Math.max(1, endYear - startYear + 1);
   return Array.from({ length }, (_, i) => (startYear + i).toString()).reverse();
 };

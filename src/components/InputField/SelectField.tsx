@@ -28,7 +28,7 @@ const SelectField = ({
   tooltip,
   getOptionLabel,
   onBlur,
-  validateOnChange = false,
+  validateOnChange = true,
   customValidation,
 }: SelectFieldProps) => {
   const selectedOption = options.find(opt => opt.value === value || opt.label === value) || null;
@@ -50,11 +50,18 @@ const SelectField = ({
     const selectedValue = newValue?.value || newValue?.label || '';
     onChange(selectedValue);
 
-    if (validateOnChange && onBlur) {
+    if (validateOnChange) {
       if (customValidation) {
         customValidation(selectedValue);
       }
-      onBlur();
+    }
+  };
+
+  const handleInputChange = (_: React.SyntheticEvent, newValue: string, reason: string) => {
+    if (reason === 'input' && validateOnChange) {
+      if (customValidation) {
+        customValidation(newValue);
+      }
     }
   };
 
@@ -66,7 +73,6 @@ const SelectField = ({
           value={selectedOption}
           onChange={handleChange}
           getOptionLabel={getOptionLabel || ((option) => option.label)}
-          onOpen={onBlur}
           renderInput={(params) => (
             <TextField
               {...params}
@@ -75,7 +81,6 @@ const SelectField = ({
               helperText={getHelperText()}
               color={getFieldColor()}
               required={required}
-              onBlur={onBlur}
             />
           )}
         />
@@ -86,8 +91,8 @@ const SelectField = ({
       options={options}
       value={selectedOption}
       onChange={handleChange}
+      onInputChange={handleInputChange}
       getOptionLabel={getOptionLabel || ((option) => option.label)}
-      onOpen={onBlur}
       renderInput={(params) => (
         <TextField
           {...params}

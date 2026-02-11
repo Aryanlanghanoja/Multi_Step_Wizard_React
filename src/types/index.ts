@@ -52,6 +52,7 @@ export interface JobEntry {
   designation: string;
   type: JobType;
   description: string;
+  organization: string;
 }
 
 export interface WorkExperience {
@@ -109,6 +110,7 @@ export interface JobEntryErrors {
   startDate?: string;
   endDate?: string;
   designation?: string;
+  organization?: string;
   type?: string;
   description?: string;
 }

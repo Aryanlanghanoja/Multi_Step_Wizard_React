@@ -324,7 +324,11 @@ export const printSubmission = (submission: FormData): void => {
               <div class="field-label">Duration</div>
               <div class="field-value">${formatDate(job.startDate)} - ${formatDate(job.endDate)}</div>
             </div>
-            <div class="field full-width">
+            <div class="field">
+              <div class="field-label">Organization</div>
+              <div class="field-value">${job.organization || "N/A"}</div>
+            </div>
+            <div class="field">
               <div class="field-label">Description</div>
               <div class="field-value">${job.description || "N/A"}</div>
             </div>

@@ -154,6 +154,7 @@ const Wizard = () => {
 
     try {
       await createSubmission(formData);
+      console.log(formData);
       setSnackbar({ open: true, message: 'Form submitted successfully!', severity: 'success' });
       setTimeout(() => {
         navigate('/data');
@@ -343,9 +344,27 @@ const Wizard = () => {
       },
     }));
 
+    // For date fields, clear errors on change to improve UX
+    if (field === 'startDate' || field === 'endDate') {
+      setErrors(prev => ({
+        ...prev,
+        workExperience: {
+          ...prev.workExperience,
+          jobs: {
+            ...prev.workExperience.jobs,
+            [jobId]: {
+              ...prev.workExperience.jobs?.[jobId],
+              [field]: undefined,
+            },
+          },
+        },
+      }));
+      return;
+    }
+
     const fieldErrors = validateWorkExperience(formData.workExperience);
     const jobFieldError = fieldErrors.jobs?.[jobId]?.[field as keyof typeof fieldErrors.jobs[typeof jobId]];
-    
+
     if (jobFieldError) {
       setErrors(prev => ({
         ...prev,
@@ -356,6 +375,21 @@ const Wizard = () => {
             [jobId]: {
               ...prev.workExperience.jobs?.[jobId],
               [field]: jobFieldError,
+            },
+          },
+        },
+      }));
+    } else {
+      // Clear error if no longer present
+      setErrors(prev => ({
+        ...prev,
+        workExperience: {
+          ...prev.workExperience,
+          jobs: {
+            ...prev.workExperience.jobs,
+            [jobId]: {
+              ...prev.workExperience.jobs?.[jobId],
+              [field]: undefined,
             },
           },
         },
@@ -468,7 +502,7 @@ const Wizard = () => {
   return (
     <Box className={styles.wizard}>
       <Paper elevation={3} className={styles.wizardContainer}>
-        <Typography variant="h4" component="h1" gutterBottom align="center">
+        <Typography variant="h4" component="h1" gutterBottom align="center" className={styles.formTitle}>
           Multi-Step Wizard Form
         </Typography>
 

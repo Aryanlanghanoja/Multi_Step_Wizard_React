@@ -1,28 +1,10 @@
 import { Box, Grid, TextField } from '@mui/material';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import dayjs, { Dayjs } from 'dayjs';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
+import dayjs from 'dayjs';
 import type { PersonalInfo, PersonalInfoErrors } from '../../../types';
 import { COUNTRY_CODES } from '../../../utils/constants';
 import InputField from '../../InputField/InputField';
 import SelectField from '../../InputField/SelectField';
-
-dayjs.extend(customParseFormat);
-
-const parseDate = (dateString: string): Dayjs | null => {
-  if (!dateString) return null;
-  if (dayjs(dateString, 'DD/MM/YYYY', true).isValid()) {
-    return dayjs(dateString, 'DD/MM/YYYY');
-  }
-
-  if (dayjs(dateString, 'YYYY-MM-DD', true).isValid()) {
-    return dayjs(dateString, 'YYYY-MM-DD');
-  }
-
-  return dayjs(dateString);
-};
+import DateInput from '../../InputField/DateInput';
 
 interface PersonalInfoStepProps {
   data: PersonalInfo;
@@ -58,14 +40,13 @@ const PersonalInfoStep = ({ data, errors, touched = {}, onChange, onBlur }: Pers
     return !!touched[field] && !errors[field as keyof typeof errors];
   };
 
-  const handleDateChange = (date: Dayjs | null) => {
-    onChange('dateOfBirth', date ? date.format('DD/MM/YYYY') : '');
-    onBlur('dateOfBirth');
-  };
+  // const handleDateChange = (date: Dayjs | null) => {
+  //   onChange('dateOfBirth', date ? date.format('DD/MM/YYYY') : '');
+  //   onBlur('dateOfBirth');
+  // };
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Box sx={{ mt: 2 }}>
+    <Box sx={{ mt: 2 }}>
         <Grid container spacing={3}>
           <Grid size={{ xs: 12, md: 4 }}>
             <InputField
@@ -164,25 +145,19 @@ const PersonalInfoStep = ({ data, errors, touched = {}, onChange, onBlur }: Pers
           </Grid>
 
           <Grid size={{ xs: 12, md: 6 }}>
-            <DatePicker
-              label="Date of Birth *"
-              value={parseDate(data.dateOfBirth)}
-              onChange={handleDateChange}
-              format="DD/MM/YYYY"
+            <DateInput
+              label="Date of Birth"
+              value={data.dateOfBirth}
+              error={errors.dateOfBirth}
+              success={isSuccess('dateOfBirth')}
+              required
+              onChange={(value) => onChange('dateOfBirth', value)}
+              onBlur={() => onBlur('dateOfBirth')}
               disableFuture
               maxDate={dayjs().subtract(1, 'day')}
               shouldDisableDate={(date) =>
                 date.isSame(dayjs(), 'day') || date.isAfter(dayjs())
               }
-              slotProps={{
-                textField: {
-                  fullWidth: true,
-                  error: !!errors.dateOfBirth,
-                  helperText: errors.dateOfBirth,
-                  color: isSuccess('dateOfBirth') ? 'success' : undefined,
-                  onBlur: () => onBlur('dateOfBirth'),
-                },
-              }}
             />
           </Grid>
 
@@ -204,7 +179,6 @@ const PersonalInfoStep = ({ data, errors, touched = {}, onChange, onBlur }: Pers
           </Grid>
         </Grid>
       </Box>
-    </LocalizationProvider>
   );
 };
 
