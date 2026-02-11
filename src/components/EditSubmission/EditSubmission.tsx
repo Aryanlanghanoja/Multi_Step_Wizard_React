@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Box,
   Stepper,
@@ -11,21 +11,26 @@ import {
   Snackbar,
   Alert,
   CircularProgress,
-} from '@mui/material';
-import dayjs from 'dayjs';
+} from "@mui/material";
+import dayjs from "dayjs";
 import {
   ArrowBack as ArrowBackIcon,
   Save as SaveIcon,
-} from '@mui/icons-material';
-import type { FormData, FormErrors } from '../../types';
-import { STEPS } from '../../utils/constants';
-import { validateForm, validateStep, validatePersonalInfo, validateWorkExperience } from '../../utils/validation';
-import { getSubmissionById, updateSubmission } from '../../services/indexedDB';
-import PersonalInfoStep from '../Wizard/Steps/PersonalInfoStep';
-import EducationInfoStep from '../Wizard/Steps/EducationInfoStep';
-import WorkExperienceStep from '../Wizard/Steps/WorkExperienceStep';
-import { createEmptyJob } from '../../utils/workExperience';
-import styles from './EditSubmission.module.css';
+} from "@mui/icons-material";
+import type { FormData, FormErrors } from "../../types";
+import { STEPS } from "../../utils/constants";
+import {
+  validateForm,
+  validateStep,
+  validatePersonalInfo,
+  validateWorkExperience,
+} from "../../utils/validation";
+import { getSubmissionById, updateSubmission } from "../../services/indexedDB";
+import PersonalInfoStep from "../Wizard/Steps/PersonalInfoStep";
+import EducationInfoStep from "../Wizard/Steps/EducationInfoStep";
+import WorkExperienceStep from "../Wizard/Steps/WorkExperienceStep";
+import { createEmptyJob } from "../../utils/workExperience";
+import styles from "./EditSubmission.module.css";
 
 const EditSubmission = () => {
   const { id } = useParams<{ id: string }>();
@@ -41,15 +46,18 @@ const EditSubmission = () => {
   const [saving, setSaving] = useState(false);
   const [snackbar, setSnackbar] = useState({
     open: false,
-    message: '',
-    severity: 'success' as 'success' | 'error'
+    message: "",
+    severity: "success" as "success" | "error",
   });
-
 
   useEffect(() => {
     const loadSubmission = async () => {
       if (!id) {
-        setSnackbar({ open: true, message: 'No submission ID provided', severity: 'error' });
+        setSnackbar({
+          open: true,
+          message: "No submission ID provided",
+          severity: "error",
+        });
         setLoading(false);
         return;
       }
@@ -59,11 +67,19 @@ const EditSubmission = () => {
         if (data) {
           setFormData(data);
         } else {
-          setSnackbar({ open: true, message: 'Submission not found', severity: 'error' });
-          setTimeout(() => navigate('/data'), 2000);
+          setSnackbar({
+            open: true,
+            message: "Submission not found",
+            severity: "error",
+          });
+          setTimeout(() => navigate("/data"), 2000);
         }
       } catch {
-        setSnackbar({ open: true, message: 'Failed to load submission', severity: 'error' });
+        setSnackbar({
+          open: true,
+          message: "Failed to load submission",
+          severity: "error",
+        });
       } finally {
         setLoading(false);
       }
@@ -77,9 +93,9 @@ const EditSubmission = () => {
 
     const stepErrors = validateStep(activeStep, formData);
     if (Object.keys(stepErrors).length > 0) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [STEPS[activeStep].toLowerCase().replace(' ', '')]: stepErrors,
+        [STEPS[activeStep].toLowerCase().replace(" ", "")]: stepErrors,
       }));
       return;
     }
@@ -87,40 +103,54 @@ const EditSubmission = () => {
     if (activeStep === STEPS.length - 1) {
       handleSubmit();
     } else {
-      setActiveStep(prev => prev + 1);
+      setActiveStep((prev) => prev + 1);
     }
   };
 
   const handleBack = () => {
-    setActiveStep(prev => prev - 1);
+    setActiveStep((prev) => prev - 1);
   };
 
   const handleSubmit = async () => {
     if (!formData || !id) return;
 
     const allErrors = validateForm(formData);
-    if (Object.keys(allErrors.personalInfo).length > 0 ||
-        Object.keys(allErrors.educationInfo).length > 0 ||
-        Object.keys(allErrors.workExperience).length > 0) {
+    if (
+      Object.keys(allErrors.personalInfo).length > 0 ||
+      Object.keys(allErrors.educationInfo).length > 0 ||
+      Object.keys(allErrors.workExperience).length > 0
+    ) {
       setErrors(allErrors);
-      setSnackbar({ open: true, message: 'Please fix all validation errors before submitting.', severity: 'error' });
+      setSnackbar({
+        open: true,
+        message: "Please fix all validation errors before submitting.",
+        severity: "error",
+      });
       return;
     }
 
     setSaving(true);
     try {
       await updateSubmission(formData);
-      setSnackbar({ open: true, message: 'Form updated successfully!', severity: 'success' });
-      setTimeout(() => navigate('/data'), 2000);
+      setSnackbar({
+        open: true,
+        message: "Form updated successfully!",
+        severity: "success",
+      });
+      setTimeout(() => navigate("/data"), 2000);
     } catch {
-      setSnackbar({ open: true, message: 'Failed to update form. Please try again.', severity: 'error' });
+      setSnackbar({
+        open: true,
+        message: "Failed to update form. Please try again.",
+        severity: "error",
+      });
     } finally {
       setSaving(false);
     }
   };
 
   const handlePersonalInfoChange = (field: string, value: string) => {
-    setFormData(prev => {
+    setFormData((prev) => {
       if (!prev) return null;
       return {
         ...prev,
@@ -136,7 +166,7 @@ const EditSubmission = () => {
     if (!formData) return;
     const fieldErrors = validatePersonalInfo(formData.personalInfo);
     if (fieldErrors[field as keyof typeof fieldErrors]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
         personalInfo: {
           ...prev.personalInfo,
@@ -146,18 +176,34 @@ const EditSubmission = () => {
     }
   };
 
-  const handleEducationChange = (section: string, field: string, value: string) => {
-    setFormData(prev => {
+  const handleEducationChange = (
+    section: string,
+    field: string,
+    value: string,
+  ) => {
+    setFormData((prev) => {
       if (!prev) return null;
       const updatedEducationInfo = { ...prev.educationInfo };
-      if (section === 'tenth') {
-        updatedEducationInfo.tenth = { ...updatedEducationInfo.tenth, [field]: value };
-      } else if (section === 'twelfth') {
-        updatedEducationInfo.twelfth = { ...updatedEducationInfo.twelfth, [field]: value };
-      } else if (section === 'diploma') {
-        updatedEducationInfo.diploma = { ...updatedEducationInfo.diploma, [field]: value };
-      } else if (section === 'graduation') {
-        updatedEducationInfo.graduation = { ...updatedEducationInfo.graduation, [field]: value };
+      if (section === "tenth") {
+        updatedEducationInfo.tenth = {
+          ...updatedEducationInfo.tenth,
+          [field]: value,
+        };
+      } else if (section === "twelfth") {
+        updatedEducationInfo.twelfth = {
+          ...updatedEducationInfo.twelfth,
+          [field]: value,
+        };
+      } else if (section === "diploma") {
+        updatedEducationInfo.diploma = {
+          ...updatedEducationInfo.diploma,
+          [field]: value,
+        };
+      } else if (section === "graduation") {
+        updatedEducationInfo.graduation = {
+          ...updatedEducationInfo.graduation,
+          [field]: value,
+        };
       }
       return {
         ...prev,
@@ -167,20 +213,20 @@ const EditSubmission = () => {
   };
 
   const handleEducationTypeChange = (type: string) => {
-    setFormData(prev => {
+    setFormData((prev) => {
       if (!prev) return null;
       return {
         ...prev,
         educationInfo: {
           ...prev.educationInfo,
-          educationType: type as 'Diploma' | '12th',
+          educationType: type as "Diploma" | "12th",
         },
       };
     });
   };
 
   const handleWorkExperienceChange = (field: string, value: string) => {
-    setFormData(prev => {
+    setFormData((prev) => {
       if (!prev) return null;
       return {
         ...prev,
@@ -196,7 +242,7 @@ const EditSubmission = () => {
     if (!formData) return;
     const fieldErrors = validateWorkExperience(formData.workExperience);
     if (fieldErrors[field as keyof typeof fieldErrors]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
         workExperience: {
           ...prev.workExperience,
@@ -207,14 +253,14 @@ const EditSubmission = () => {
   };
 
   const handleJobChange = (jobId: string, field: string, value: string) => {
-    setFormData(prev => {
+    setFormData((prev) => {
       if (!prev) return null;
       return {
         ...prev,
         workExperience: {
           ...prev.workExperience,
-          jobs: prev.workExperience.jobs.map(job =>
-            job.id === jobId ? { ...job, [field]: value } : job
+          jobs: prev.workExperience.jobs.map((job) =>
+            job.id === jobId ? { ...job, [field]: value } : job,
           ),
         },
       };
@@ -222,7 +268,7 @@ const EditSubmission = () => {
   };
 
   const handleAddJob = () => {
-    setFormData(prev => {
+    setFormData((prev) => {
       if (!prev) return null;
       return {
         ...prev,
@@ -235,20 +281,20 @@ const EditSubmission = () => {
   };
 
   const handleRemoveJob = (jobId: string) => {
-    setFormData(prev => {
+    setFormData((prev) => {
       if (!prev) return null;
       return {
         ...prev,
         workExperience: {
           ...prev.workExperience,
-          jobs: prev.workExperience.jobs.filter(job => job.id !== jobId),
+          jobs: prev.workExperience.jobs.filter((job) => job.id !== jobId),
         },
       };
     });
   };
 
   const handleSkillsChange = (skills: string[]) => {
-    setFormData(prev => {
+    setFormData((prev) => {
       if (!prev) return null;
       return {
         ...prev,
@@ -262,43 +308,51 @@ const EditSubmission = () => {
 
   const handleJobBlur = (jobId: string, field: string) => {
     if (!formData) return;
-    const job = formData.workExperience.jobs.find(j => j.id === jobId);
+    const job = formData.workExperience.jobs.find((j) => j.id === jobId);
     if (!job) return;
 
     let error: string | undefined;
     switch (field) {
-      case 'startDate':
+      case "startDate":
         if (!job.startDate) {
-          error = 'Start date is required';
+          error = "Start date is required";
         }
         break;
-      case 'endDate':
+      case "endDate":
         if (!job.endDate) {
-          error = 'End date is required';
-        } else if (job.startDate && new Date(job.startDate) >= new Date(job.endDate)) {
-          error = 'End date must be after start date';
+          error = "End date is required";
+        } else if (
+          job.startDate &&
+          new Date(job.startDate) >= new Date(job.endDate)
+        ) {
+          error = "End date must be after start date";
         }
         break;
-      case 'designation':
+      case "designation":
         if (!job.designation.trim()) {
-          error = 'Designation is required';
+          error = "Designation is required";
         }
         break;
-      case 'type':
+      case "organization":
+        if (!job.organization.trim()) {
+          error = "Organization is required";
+        }
+        break;
+      case "type":
         if (!job.type) {
-          error = 'Job type is required';
+          error = "Job type is required";
         }
         break;
-      case 'description':
+      case "description":
         if (!job.description.trim()) {
-          error = 'Description is required';
+          error = "Description is required";
         }
         break;
       default:
         break;
     }
 
-    setErrors(prev => ({
+    setErrors((prev) => ({
       ...prev,
       workExperience: {
         ...prev.workExperience,
@@ -334,7 +388,13 @@ const EditSubmission = () => {
             onChange={handleEducationChange}
             onBlur={() => {}}
             onEducationTypeChange={handleEducationTypeChange}
-            birthYear={formData.personalInfo.dateOfBirth ? dayjs(formData.personalInfo.dateOfBirth, 'DD/MM/YYYY').year().toString() : undefined}
+            birthYear={
+              formData.personalInfo.dateOfBirth
+                ? dayjs(formData.personalInfo.dateOfBirth, "DD/MM/YYYY")
+                    .year()
+                    .toString()
+                : undefined
+            }
           />
         );
       case 2:
@@ -363,13 +423,18 @@ const EditSubmission = () => {
   };
 
   const handleCancel = () => {
-    navigate('/data');
+    navigate("/data");
   };
 
   if (loading) {
     return (
       <Box className={styles.editSubmission}>
-        <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          minHeight="60vh"
+        >
           <CircularProgress />
         </Box>
       </Box>
@@ -398,7 +463,12 @@ const EditSubmission = () => {
   return (
     <Box className={styles.editSubmission}>
       <Paper elevation={3} className={styles.container}>
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          mb={3}
+        >
           <Typography variant="h4" component="h1">
             Edit Form Submission
           </Typography>
@@ -439,9 +509,15 @@ const EditSubmission = () => {
             variant="contained"
             onClick={handleNext}
             disabled={!isStepValid() || saving}
-            startIcon={activeStep === STEPS.length - 1 ? <SaveIcon /> : undefined}
+            startIcon={
+              activeStep === STEPS.length - 1 ? <SaveIcon /> : undefined
+            }
           >
-            {saving ? 'Saving...' : activeStep === STEPS.length - 1 ? 'Save Changes' : 'Next'}
+            {saving
+              ? "Saving..."
+              : activeStep === STEPS.length - 1
+                ? "Save Changes"
+                : "Next"}
           </Button>
         </Box>
       </Paper>
@@ -449,12 +525,12 @@ const EditSubmission = () => {
       <Snackbar
         open={snackbar.open}
         autoHideDuration={6000}
-        onClose={() => setSnackbar(prev => ({ ...prev, open: false }))}
+        onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
       >
         <Alert
-          onClose={() => setSnackbar(prev => ({ ...prev, open: false }))}
+          onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
           severity={snackbar.severity}
-          sx={{ width: '100%' }}
+          sx={{ width: "100%" }}
         >
           {snackbar.message}
         </Alert>

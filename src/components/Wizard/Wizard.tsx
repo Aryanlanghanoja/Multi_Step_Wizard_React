@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Stepper,
@@ -10,58 +10,64 @@ import {
   Typography,
   Snackbar,
   Alert,
-} from '@mui/material';
-import dayjs from 'dayjs';
-import type { FormData, FormErrors } from '../../types';
-import { STEPS } from '../../utils/constants';
-import { validateForm, validateStep, validatePersonalInfo, validateWorkExperience, validateEducationInfo } from '../../utils/validation';
-import { createSubmission } from '../../services/indexedDB';
-import PersonalInfoStep from './Steps/PersonalInfoStep';
-import EducationInfoStep from './Steps/EducationInfoStep';
-import WorkExperienceStep from './Steps/WorkExperienceStep';
-import { createEmptyJob } from '../../utils/workExperience';
-import styles from './Wizard.module.css';
+} from "@mui/material";
+import dayjs from "dayjs";
+import type { FormData, FormErrors } from "../../types";
+import { STEPS } from "../../utils/constants";
+import {
+  validateForm,
+  validateStep,
+  validatePersonalInfo,
+  validateWorkExperience,
+  validateEducationInfo,
+} from "../../utils/validation";
+import { createSubmission } from "../../services/indexedDB";
+import PersonalInfoStep from "./Steps/PersonalInfoStep";
+import EducationInfoStep from "./Steps/EducationInfoStep";
+import WorkExperienceStep from "./Steps/WorkExperienceStep";
+import { createEmptyJob } from "../../utils/workExperience";
+import styles from "./Wizard.module.css";
 
 const initialFormData: FormData = {
   personalInfo: {
-    firstName: '',
-    middleName: '',
-    lastName: '',
-    countryCode: '',
-    phoneNumber: '',
-    email: '',
-    dateOfBirth: '',
-    about: '',
+    firstName: "",
+    middleName: "",
+    lastName: "",
+    countryCode: "",
+    phoneNumber: "",
+    email: "",
+    dateOfBirth: "",
+    about: "",
   },
   educationInfo: {
     tenth: {
-      passYear: '',
-      board: '',
+      passYear: "",
+      board: "",
     },
-    educationType: '12th',
+    educationType: "12th",
     twelfth: {
-      passYear: '',
-      board: '',
+      passYear: "",
+      board: "",
     },
     diploma: {
-      passYear: '',
-      organization: '',
-      major: '',
+      passYear: "",
+      organization: "",
+      major: "",
     },
     graduation: {
-      completionYear: '',
-      organization: '',
-      degree: '',
-      major: '',
+      completionYear: "",
+      organization: "",
+      degree: "",
+      major: "",
     },
   },
   workExperience: {
-    totalExperience: '',
+    totalExperience: "",
     jobs: [],
     skills: [],
-    currentCTC: '',
-    expectedCTC: '',
-    availableFrom: '',
+    currentCTC: "",
+    expectedCTC: "",
+    availableFrom: "",
   },
 };
 
@@ -118,15 +124,19 @@ const Wizard = () => {
     workExperience: {},
   });
   const [touched, setTouched] = useState<TouchedState>(initialTouchedState);
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' as 'success' | 'error' });
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success" as "success" | "error",
+  });
   const navigate = useNavigate();
 
   const handleNext = () => {
     const stepErrors = validateStep(activeStep, formData);
     if (Object.keys(stepErrors).length > 0) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [STEPS[activeStep].toLowerCase().replace(' ', '')]: stepErrors,
+        [STEPS[activeStep].toLowerCase().replace(" ", "")]: stepErrors,
       }));
       return;
     }
@@ -134,34 +144,48 @@ const Wizard = () => {
     if (activeStep === STEPS.length - 1) {
       handleSubmit();
     } else {
-      setActiveStep(prev => prev + 1);
+      setActiveStep((prev) => prev + 1);
     }
   };
 
   const handleBack = () => {
-    setActiveStep(prev => prev - 1);
+    setActiveStep((prev) => prev - 1);
   };
 
   const handleSubmit = async () => {
     const allErrors = validateForm(formData);
-    if (Object.keys(allErrors.personalInfo).length > 0 ||
-        Object.keys(allErrors.educationInfo).length > 0 ||
-        Object.keys(allErrors.workExperience).length > 0) {
+    if (
+      Object.keys(allErrors.personalInfo).length > 0 ||
+      Object.keys(allErrors.educationInfo).length > 0 ||
+      Object.keys(allErrors.workExperience).length > 0
+    ) {
       setErrors(allErrors);
-      setSnackbar({ open: true, message: 'Please fix all validation errors before submitting.', severity: 'error' });
+      setSnackbar({
+        open: true,
+        message: "Please fix all validation errors before submitting.",
+        severity: "error",
+      });
       return;
     }
 
     try {
       await createSubmission(formData);
       console.log(formData);
-      setSnackbar({ open: true, message: 'Form submitted successfully!', severity: 'success' });
+      setSnackbar({
+        open: true,
+        message: "Form submitted successfully!",
+        severity: "success",
+      });
       setTimeout(() => {
-        navigate('/data');
+        navigate("/data");
       }, 500);
     } catch (error) {
       console.log(error);
-      setSnackbar({ open: true, message: 'Failed to submit form. Please try again.', severity: 'error' });
+      setSnackbar({
+        open: true,
+        message: "Failed to submit form. Please try again.",
+        severity: "error",
+      });
     }
   };
 
@@ -172,18 +196,21 @@ const Wizard = () => {
     };
     const fieldErrors = validatePersonalInfo(updatedPersonalInfo);
 
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       personalInfo: updatedPersonalInfo,
     }));
 
-    setErrors(prev => {
+    setErrors((prev) => {
       const newPersonalInfoErrors = { ...prev.personalInfo };
       const error = fieldErrors[field as keyof typeof fieldErrors];
       if (error) {
-        newPersonalInfoErrors[field as keyof typeof newPersonalInfoErrors] = error;
+        newPersonalInfoErrors[field as keyof typeof newPersonalInfoErrors] =
+          error;
       } else {
-        delete newPersonalInfoErrors[field as keyof typeof newPersonalInfoErrors];
+        delete newPersonalInfoErrors[
+          field as keyof typeof newPersonalInfoErrors
+        ];
       }
       return {
         ...prev,
@@ -193,7 +220,7 @@ const Wizard = () => {
   };
 
   const handlePersonalInfoBlur = (field: string) => {
-    setTouched(prev => ({
+    setTouched((prev) => ({
       ...prev,
       personalInfo: {
         ...prev.personalInfo,
@@ -202,7 +229,7 @@ const Wizard = () => {
     }));
 
     const fieldErrors = validatePersonalInfo(formData.personalInfo);
-    setErrors(prev => ({
+    setErrors((prev) => ({
       ...prev,
       personalInfo: {
         ...prev.personalInfo,
@@ -211,17 +238,33 @@ const Wizard = () => {
     }));
   };
 
-  const handleEducationChange = (section: string, field: string, value: string) => {
-    setFormData(prev => {
+  const handleEducationChange = (
+    section: string,
+    field: string,
+    value: string,
+  ) => {
+    setFormData((prev) => {
       const updatedEducationInfo = { ...prev.educationInfo };
-      if (section === 'tenth') {
-        updatedEducationInfo.tenth = { ...updatedEducationInfo.tenth, [field]: value };
-      } else if (section === 'twelfth') {
-        updatedEducationInfo.twelfth = { ...updatedEducationInfo.twelfth, [field]: value };
-      } else if (section === 'diploma') {
-        updatedEducationInfo.diploma = { ...updatedEducationInfo.diploma, [field]: value };
-      } else if (section === 'graduation') {
-        updatedEducationInfo.graduation = { ...updatedEducationInfo.graduation, [field]: value };
+      if (section === "tenth") {
+        updatedEducationInfo.tenth = {
+          ...updatedEducationInfo.tenth,
+          [field]: value,
+        };
+      } else if (section === "twelfth") {
+        updatedEducationInfo.twelfth = {
+          ...updatedEducationInfo.twelfth,
+          [field]: value,
+        };
+      } else if (section === "diploma") {
+        updatedEducationInfo.diploma = {
+          ...updatedEducationInfo.diploma,
+          [field]: value,
+        };
+      } else if (section === "graduation") {
+        updatedEducationInfo.graduation = {
+          ...updatedEducationInfo.graduation,
+          [field]: value,
+        };
       }
       return {
         ...prev,
@@ -230,15 +273,22 @@ const Wizard = () => {
     });
 
     const fieldErrors = validateEducationInfo(formData.educationInfo);
-    const sectionFieldError = (fieldErrors as Record<string, Record<string, string | undefined>>)?.[section]?.[field];
-    
+    const sectionFieldError = (
+      fieldErrors as Record<string, Record<string, string | undefined>>
+    )?.[section]?.[field];
+
     if (sectionFieldError) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
         educationInfo: {
           ...prev.educationInfo,
           [section]: {
-            ...(prev.educationInfo as Record<string, Record<string, string | undefined>>)?.[section],
+            ...(
+              prev.educationInfo as Record<
+                string,
+                Record<string, string | undefined>
+              >
+            )?.[section],
             [field]: sectionFieldError,
           },
         },
@@ -247,7 +297,7 @@ const Wizard = () => {
   };
 
   const handleEducationBlur = (section: string, field: string) => {
-    setTouched(prev => ({
+    setTouched((prev) => ({
       ...prev,
       educationInfo: {
         ...prev.educationInfo,
@@ -259,14 +309,21 @@ const Wizard = () => {
     }));
 
     const fieldErrors = validateEducationInfo(formData.educationInfo);
-    const sectionFieldError = (fieldErrors as Record<string, Record<string, string | undefined>>)?.[section]?.[field];
-    
-    setErrors(prev => ({
+    const sectionFieldError = (
+      fieldErrors as Record<string, Record<string, string | undefined>>
+    )?.[section]?.[field];
+
+    setErrors((prev) => ({
       ...prev,
       educationInfo: {
         ...prev.educationInfo,
         [section]: {
-          ...(prev.educationInfo as Record<string, Record<string, string | undefined>>)?.[section],
+          ...(
+            prev.educationInfo as Record<
+              string,
+              Record<string, string | undefined>
+            >
+          )?.[section],
           [field]: sectionFieldError,
         },
       },
@@ -274,17 +331,17 @@ const Wizard = () => {
   };
 
   const handleEducationTypeChange = (type: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       educationInfo: {
         ...prev.educationInfo,
-        educationType: type as 'Diploma' | '12th',
+        educationType: type as "Diploma" | "12th",
       },
     }));
   };
 
   const handleWorkExperienceChange = (field: string, value: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       workExperience: {
         ...prev.workExperience,
@@ -294,7 +351,7 @@ const Wizard = () => {
 
     const fieldErrors = validateWorkExperience(formData.workExperience);
     if (fieldErrors[field as keyof typeof fieldErrors]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
         workExperience: {
           ...prev.workExperience,
@@ -305,7 +362,7 @@ const Wizard = () => {
   };
 
   const handleSkillsChange = (skills: string[]) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       workExperience: {
         ...prev.workExperience,
@@ -315,7 +372,7 @@ const Wizard = () => {
   };
 
   const handleWorkExperienceBlur = (field: string) => {
-    setTouched(prev => ({
+    setTouched((prev) => ({
       ...prev,
       workExperience: {
         ...prev.workExperience,
@@ -324,7 +381,7 @@ const Wizard = () => {
     }));
 
     const fieldErrors = validateWorkExperience(formData.workExperience);
-    setErrors(prev => ({
+    setErrors((prev) => ({
       ...prev,
       workExperience: {
         ...prev.workExperience,
@@ -334,19 +391,18 @@ const Wizard = () => {
   };
 
   const handleJobChange = (jobId: string, field: string, value: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       workExperience: {
         ...prev.workExperience,
-        jobs: prev.workExperience.jobs.map(job =>
-          job.id === jobId ? { ...job, [field]: value } : job
+        jobs: prev.workExperience.jobs.map((job) =>
+          job.id === jobId ? { ...job, [field]: value } : job,
         ),
       },
     }));
 
-    // For date fields, clear errors on change to improve UX
-    if (field === 'startDate' || field === 'endDate') {
-      setErrors(prev => ({
+    if (field === "startDate" || field === "endDate") {
+      setErrors((prev) => ({
         ...prev,
         workExperience: {
           ...prev.workExperience,
@@ -363,10 +419,13 @@ const Wizard = () => {
     }
 
     const fieldErrors = validateWorkExperience(formData.workExperience);
-    const jobFieldError = fieldErrors.jobs?.[jobId]?.[field as keyof typeof fieldErrors.jobs[typeof jobId]];
+    const jobFieldError =
+      fieldErrors.jobs?.[jobId]?.[
+        field as keyof (typeof fieldErrors.jobs)[typeof jobId]
+      ];
 
     if (jobFieldError) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
         workExperience: {
           ...prev.workExperience,
@@ -380,8 +439,7 @@ const Wizard = () => {
         },
       }));
     } else {
-      // Clear error if no longer present
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
         workExperience: {
           ...prev.workExperience,
@@ -398,7 +456,7 @@ const Wizard = () => {
   };
 
   const handleJobBlur = (jobId: string, field: string) => {
-    setTouched(prev => ({
+    setTouched((prev) => ({
       ...prev,
       workExperience: {
         ...prev.workExperience,
@@ -413,9 +471,12 @@ const Wizard = () => {
     }));
 
     const fieldErrors = validateWorkExperience(formData.workExperience);
-    const jobFieldError = fieldErrors.jobs?.[jobId]?.[field as keyof typeof fieldErrors.jobs[typeof jobId]];
-    
-    setErrors(prev => ({
+    const jobFieldError =
+      fieldErrors.jobs?.[jobId]?.[
+        field as keyof (typeof fieldErrors.jobs)[typeof jobId]
+      ];
+
+    setErrors((prev) => ({
       ...prev,
       workExperience: {
         ...prev.workExperience,
@@ -431,7 +492,7 @@ const Wizard = () => {
   };
 
   const handleAddJob = () => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       workExperience: {
         ...prev.workExperience,
@@ -441,11 +502,11 @@ const Wizard = () => {
   };
 
   const handleRemoveJob = (jobId: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       workExperience: {
         ...prev.workExperience,
-        jobs: prev.workExperience.jobs.filter(job => job.id !== jobId),
+        jobs: prev.workExperience.jobs.filter((job) => job.id !== jobId),
       },
     }));
   };
@@ -471,7 +532,13 @@ const Wizard = () => {
             onChange={handleEducationChange}
             onBlur={handleEducationBlur}
             onEducationTypeChange={handleEducationTypeChange}
-            birthYear={formData.personalInfo.dateOfBirth ? dayjs(formData.personalInfo.dateOfBirth, 'DD/MM/YYYY').year().toString() : undefined}
+            birthYear={
+              formData.personalInfo.dateOfBirth
+                ? dayjs(formData.personalInfo.dateOfBirth, "DD/MM/YYYY")
+                    .year()
+                    .toString()
+                : undefined
+            }
           />
         );
       case 2:
@@ -502,7 +569,13 @@ const Wizard = () => {
   return (
     <Box className={styles.wizard}>
       <Paper elevation={3} className={styles.wizardContainer}>
-        <Typography variant="h4" component="h1" gutterBottom align="center" className={styles.formTitle}>
+        <Typography
+          variant="h4"
+          component="h1"
+          gutterBottom
+          align="center"
+          className={styles.formTitle}
+        >
           Multi-Step Wizard Form
         </Typography>
 
@@ -531,7 +604,7 @@ const Wizard = () => {
             onClick={handleNext}
             disabled={!isStepValid()}
           >
-            {activeStep === STEPS.length - 1 ? 'Submit' : 'Next'}
+            {activeStep === STEPS.length - 1 ? "Submit" : "Next"}
           </Button>
         </Box>
       </Paper>
@@ -539,12 +612,12 @@ const Wizard = () => {
       <Snackbar
         open={snackbar.open}
         autoHideDuration={6000}
-        onClose={() => setSnackbar(prev => ({ ...prev, open: false }))}
+        onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
       >
         <Alert
-          onClose={() => setSnackbar(prev => ({ ...prev, open: false }))}
+          onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
           severity={snackbar.severity}
-          sx={{ width: '100%' }}
+          sx={{ width: "100%" }}
         >
           {snackbar.message}
         </Alert>
@@ -554,4 +627,3 @@ const Wizard = () => {
 };
 
 export default Wizard;
-

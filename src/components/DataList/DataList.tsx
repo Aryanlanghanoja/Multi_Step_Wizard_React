@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Table,
@@ -20,35 +20,42 @@ import {
   DialogTitle,
   Snackbar,
   Alert,
-} from '@mui/material';
+} from "@mui/material";
 import {
   Visibility as ViewIcon,
   Edit as EditIcon,
   Print as PrintIcon,
   Delete as DeleteIcon,
-} from '@mui/icons-material';
-import type { FormData } from '../../types';
-import { getAllSubmissions, deleteSubmission } from '../../services/indexedDB';
-import { printSubmission } from '../../utils/print';
-import styles from './DataList.module.css';
+} from "@mui/icons-material";
+import type { FormData } from "../../types";
+import { getAllSubmissions, deleteSubmission } from "../../services/indexedDB";
+import { printSubmission } from "../../utils/print";
+import styles from "./DataList.module.css";
 
 const DataList = () => {
   const [submissions, setSubmissions] = useState<FormData[]>([]);
-  const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; submission: FormData | null }>({
+  const [deleteDialog, setDeleteDialog] = useState<{
+    open: boolean;
+    submission: FormData | null;
+  }>({
     open: false,
     submission: null,
   });
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' as 'success' | 'error' });
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success" as "success" | "error",
+  });
   const navigate = useNavigate();
 
-  const loadSubmissions = async () => {
-    try {
-      const data = await getAllSubmissions();
-      setSubmissions(data);
-    } catch {
-      setSnackbar({ open: true, message: 'Failed to load submissions.', severity: 'error' });
-    }
-  };
+  // const loadSubmissions = async () => {
+  //   try {
+  //     const data = await getAllSubmissions();
+  //     setSubmissions(data);
+  //   } catch {
+  //     setSnackbar({ open: true, message: 'Failed to load submissions.', severity: 'error' });
+  //   }
+  // };
 
   useEffect(() => {
     const fetchSubmissions = async () => {
@@ -56,7 +63,11 @@ const DataList = () => {
         const data = await getAllSubmissions();
         setSubmissions(data);
       } catch {
-        setSnackbar({ open: true, message: 'Failed to load submissions.', severity: 'error' });
+        setSnackbar({
+          open: true,
+          message: "Failed to load submissions.",
+          severity: "error",
+        });
       }
     };
 
@@ -84,13 +95,24 @@ const DataList = () => {
 
     try {
       await deleteSubmission(deleteDialog.submission.id!);
-      setSubmissions(prev => prev.filter(sub => sub.id !== deleteDialog.submission!.id));
-      setSnackbar({ open: true, message: 'Form deleted successfully.', severity: 'success' });
+      setSubmissions((prev) =>
+        prev.filter((sub) => sub.id !== deleteDialog.submission!.id),
+      );
+      setSnackbar({
+        open: true,
+        message: "Form deleted successfully.",
+        severity: "success",
+      });
     } catch (error) {
-      console.log(error)
-      setSnackbar({ open: true, message: 'Failed to delete submission.', severity: 'error' });
+      console.log(error);
+      setSnackbar({
+        open: true,
+        message: "Failed to delete submission.",
+        severity: "error",
+      });
+    } finally {
+      setDeleteDialog({ open: false, submission: null });
     }
-    setDeleteDialog({ open: false, submission: null });
   };
 
   const handleDeleteCancel = () => {
@@ -104,7 +126,7 @@ const DataList = () => {
           <Typography variant="h4" component="h1" gutterBottom>
             Form Submissions
           </Typography>
-          <Button variant="contained" onClick={() => navigate('/')}>
+          <Button variant="contained" onClick={() => navigate("/")}>
             Create New Form
           </Button>
         </Box>
@@ -191,12 +213,21 @@ const DataList = () => {
           <DialogTitle id="delete-dialog-title">Confirm Delete</DialogTitle>
           <DialogContent>
             <DialogContentText id="delete-dialog-description">
-              Are you sure you want to delete the form of <b>{deleteDialog.submission.personalInfo.firstName} {deleteDialog.submission.personalInfo.lastName}</b>? This action cannot be undone.
+              Are you sure you want to delete the form of{" "}
+              <b>
+                {deleteDialog.submission.personalInfo.firstName}{" "}
+                {deleteDialog.submission.personalInfo.lastName}
+              </b>
+              ? This action cannot be undone.
             </DialogContentText>
           </DialogContent>
           <DialogActions>
             <Button onClick={handleDeleteCancel}>Cancel</Button>
-            <Button onClick={handleDeleteConfirm} color="error" variant="contained">
+            <Button
+              onClick={handleDeleteConfirm}
+              color="error"
+              variant="contained"
+            >
               Delete
             </Button>
           </DialogActions>
@@ -206,12 +237,12 @@ const DataList = () => {
       <Snackbar
         open={snackbar.open}
         autoHideDuration={6000}
-        onClose={() => setSnackbar(prev => ({ ...prev, open: false }))}
+        onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
       >
         <Alert
-          onClose={() => setSnackbar(prev => ({ ...prev, open: false }))}
+          onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
           severity={snackbar.severity}
-          sx={{ width: '100%' }}
+          sx={{ width: "100%" }}
         >
           {snackbar.message}
         </Alert>

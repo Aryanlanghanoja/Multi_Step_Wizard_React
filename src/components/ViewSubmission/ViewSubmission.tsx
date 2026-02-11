@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Box,
   Paper,
@@ -12,7 +12,7 @@ import {
   Alert,
   Card,
   CardContent,
-} from '@mui/material';
+} from "@mui/material";
 import {
   Edit as EditIcon,
   Print as PrintIcon,
@@ -20,28 +20,28 @@ import {
   Work as WorkIcon,
   School as SchoolIcon,
   Person as PersonIcon,
-} from '@mui/icons-material';
-import type { FormData } from '../../types';
-import { getSubmissionById } from '../../services/indexedDB';
-import { printSubmission } from '../../utils/print';
-import dayjs from 'dayjs';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
-import styles from './ViewSubmission.module.css';
+} from "@mui/icons-material";
+import type { FormData } from "../../types";
+import { getSubmissionById } from "../../services/indexedDB";
+import { printSubmission } from "../../utils/print";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+import styles from "./ViewSubmission.module.css";
 
 dayjs.extend(customParseFormat);
 
 const parseDateString = (dateString: string): dayjs.Dayjs | null => {
   if (!dateString) return null;
-  if (dayjs(dateString).isValid() && dateString.includes('T')) {
+  if (dayjs(dateString).isValid() && dateString.includes("T")) {
     return dayjs(dateString);
   }
 
-  if (dayjs(dateString, 'DD/MM/YYYY', true).isValid()) {
-    return dayjs(dateString, 'DD/MM/YYYY');
+  if (dayjs(dateString, "DD/MM/YYYY", true).isValid()) {
+    return dayjs(dateString, "DD/MM/YYYY");
   }
 
-  if (dayjs(dateString, 'YYYY-MM-DD', true).isValid()) {
-    return dayjs(dateString, 'YYYY-MM-DD');
+  if (dayjs(dateString, "YYYY-MM-DD", true).isValid()) {
+    return dayjs(dateString, "YYYY-MM-DD");
   }
 
   return dayjs(dateString);
@@ -57,7 +57,7 @@ const ViewSubmission = () => {
   useEffect(() => {
     const loadSubmission = async () => {
       if (!id) {
-        setError('No submission ID provided');
+        setError("No submission ID provided");
         setLoading(false);
         return;
       }
@@ -67,10 +67,10 @@ const ViewSubmission = () => {
         if (data) {
           setSubmission(data);
         } else {
-          setError('Submission not found');
+          setError("Submission not found");
         }
       } catch {
-        setError('Failed to load submission');
+        setError("Failed to load submission");
       } finally {
         setLoading(false);
       }
@@ -90,20 +90,25 @@ const ViewSubmission = () => {
   };
 
   const handleBack = () => {
-    navigate('/data');
+    navigate("/data");
   };
 
   const formatDate = (dateString: string): string => {
-    if (!dateString) return 'N/A';
+    if (!dateString) return "N/A";
     const parsed = parseDateString(dateString);
-    if (!parsed) return 'Invalid Date';
-    return parsed.format('DD/MM/YYYY');
+    if (!parsed) return "Invalid Date";
+    return parsed.format("DD/MM/YYYY");
   };
 
   if (loading) {
     return (
       <Box className={styles.viewSubmission}>
-        <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          minHeight="60vh"
+        >
           <CircularProgress />
         </Box>
       </Box>
@@ -115,7 +120,7 @@ const ViewSubmission = () => {
       <Box className={styles.viewSubmission}>
         <Paper className={styles.container}>
           <Alert severity="error" sx={{ mb: 2 }}>
-            {error || 'Submission not found'}
+            {error || "Submission not found"}
           </Alert>
           <Button
             variant="outlined"
@@ -132,14 +137,14 @@ const ViewSubmission = () => {
   return (
     <Box className={styles.viewSubmission}>
       <Paper elevation={3} className={styles.container}>
-        {/* Header */}
         <Box className={styles.header}>
           <Box>
             <Typography variant="h4" component="h1" gutterBottom>
               Form Submission Details
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              ID: {submission.id} | Created: {formatDate(submission.createdAt || '')}
+              ID: {submission.id} | Created:{" "}
+              {formatDate(submission.createdAt || "")}
             </Typography>
           </Box>
           <Box className={styles.actions}>
@@ -181,7 +186,11 @@ const ViewSubmission = () => {
             <CardContent>
               <Grid container spacing={3}>
                 <Grid size={{ xs: 12, md: 4 }}>
-                  <Typography variant="caption" color="text.secondary" display="block">
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    display="block"
+                  >
                     First Name
                   </Typography>
                   <Typography variant="body1" fontWeight={500}>
@@ -189,15 +198,23 @@ const ViewSubmission = () => {
                   </Typography>
                 </Grid>
                 <Grid size={{ xs: 12, md: 4 }}>
-                  <Typography variant="caption" color="text.secondary" display="block">
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    display="block"
+                  >
                     Middle Name
                   </Typography>
                   <Typography variant="body1" fontWeight={500}>
-                    {submission.personalInfo.middleName || 'N/A'}
+                    {submission.personalInfo.middleName || "N/A"}
                   </Typography>
                 </Grid>
                 <Grid size={{ xs: 12, md: 4 }}>
-                  <Typography variant="caption" color="text.secondary" display="block">
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    display="block"
+                  >
                     Last Name
                   </Typography>
                   <Typography variant="body1" fontWeight={500}>
@@ -205,15 +222,24 @@ const ViewSubmission = () => {
                   </Typography>
                 </Grid>
                 <Grid size={{ xs: 12, md: 6 }}>
-                  <Typography variant="caption" color="text.secondary" display="block">
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    display="block"
+                  >
                     Phone Number
                   </Typography>
                   <Typography variant="body1" fontWeight={500}>
-                    {submission.personalInfo.countryCode} {submission.personalInfo.phoneNumber}
+                    {submission.personalInfo.countryCode}{" "}
+                    {submission.personalInfo.phoneNumber}
                   </Typography>
                 </Grid>
                 <Grid size={{ xs: 12, md: 6 }}>
-                  <Typography variant="caption" color="text.secondary" display="block">
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    display="block"
+                  >
                     Email Address
                   </Typography>
                   <Typography variant="body1" fontWeight={500}>
@@ -221,7 +247,11 @@ const ViewSubmission = () => {
                   </Typography>
                 </Grid>
                 <Grid size={{ xs: 12, md: 6 }}>
-                  <Typography variant="caption" color="text.secondary" display="block">
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    display="block"
+                  >
                     Date of Birth
                   </Typography>
                   <Typography variant="body1" fontWeight={500}>
@@ -247,7 +277,11 @@ const ViewSubmission = () => {
               </Typography>
               <Grid container spacing={3} mb={3}>
                 <Grid size={{ xs: 12, md: 6 }}>
-                  <Typography variant="caption" color="text.secondary" display="block">
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    display="block"
+                  >
                     Pass Year
                   </Typography>
                   <Typography variant="body1" fontWeight={500}>
@@ -255,13 +289,17 @@ const ViewSubmission = () => {
                   </Typography>
                 </Grid>
                 <Grid size={{ xs: 12, md: 6 }}>
-                  <Typography variant="caption" color="text.secondary" display="block">
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    display="block"
+                  >
                     Board
                   </Typography>
-                  <Chip 
-                    label={submission.educationInfo.tenth.board} 
-                    size="small" 
-                    color="primary" 
+                  <Chip
+                    label={submission.educationInfo.tenth.board}
+                    size="small"
+                    color="primary"
                     variant="outlined"
                   />
                 </Grid>
@@ -269,14 +307,18 @@ const ViewSubmission = () => {
 
               <Divider sx={{ my: 2 }} />
 
-              {submission.educationInfo.educationType === '12th' ? (
+              {submission.educationInfo.educationType === "12th" ? (
                 <>
                   <Typography variant="subtitle1" fontWeight={600} gutterBottom>
                     12th Standard
                   </Typography>
                   <Grid container spacing={3} mb={3}>
                     <Grid size={{ xs: 12, md: 6 }}>
-                      <Typography variant="caption" color="text.secondary" display="block">
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        display="block"
+                      >
                         Pass Year
                       </Typography>
                       <Typography variant="body1" fontWeight={500}>
@@ -284,13 +326,17 @@ const ViewSubmission = () => {
                       </Typography>
                     </Grid>
                     <Grid size={{ xs: 12, md: 6 }}>
-                      <Typography variant="caption" color="text.secondary" display="block">
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        display="block"
+                      >
                         Board
                       </Typography>
-                      <Chip 
-                        label={submission.educationInfo.twelfth.board} 
-                        size="small" 
-                        color="primary" 
+                      <Chip
+                        label={submission.educationInfo.twelfth.board}
+                        size="small"
+                        color="primary"
                         variant="outlined"
                       />
                     </Grid>
@@ -303,7 +349,11 @@ const ViewSubmission = () => {
                   </Typography>
                   <Grid container spacing={3} mb={3}>
                     <Grid size={{ xs: 12, md: 4 }}>
-                      <Typography variant="caption" color="text.secondary" display="block">
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        display="block"
+                      >
                         Passing Year
                       </Typography>
                       <Typography variant="body1" fontWeight={500}>
@@ -311,7 +361,11 @@ const ViewSubmission = () => {
                       </Typography>
                     </Grid>
                     <Grid size={{ xs: 12, md: 4 }}>
-                      <Typography variant="caption" color="text.secondary" display="block">
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        display="block"
+                      >
                         Organization
                       </Typography>
                       <Typography variant="body1" fontWeight={500}>
@@ -319,7 +373,11 @@ const ViewSubmission = () => {
                       </Typography>
                     </Grid>
                     <Grid size={{ xs: 12, md: 4 }}>
-                      <Typography variant="caption" color="text.secondary" display="block">
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        display="block"
+                      >
                         Major
                       </Typography>
                       <Typography variant="body1" fontWeight={500}>
@@ -337,7 +395,11 @@ const ViewSubmission = () => {
               </Typography>
               <Grid container spacing={3}>
                 <Grid size={{ xs: 12, md: 6 }}>
-                  <Typography variant="caption" color="text.secondary" display="block">
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    display="block"
+                  >
                     Completion Year
                   </Typography>
                   <Typography variant="body1" fontWeight={500}>
@@ -345,7 +407,11 @@ const ViewSubmission = () => {
                   </Typography>
                 </Grid>
                 <Grid size={{ xs: 12, md: 6 }}>
-                  <Typography variant="caption" color="text.secondary" display="block">
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    display="block"
+                  >
                     Organization/University
                   </Typography>
                   <Typography variant="body1" fontWeight={500}>
@@ -353,18 +419,26 @@ const ViewSubmission = () => {
                   </Typography>
                 </Grid>
                 <Grid size={{ xs: 12, md: 6 }}>
-                  <Typography variant="caption" color="text.secondary" display="block">
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    display="block"
+                  >
                     Degree
                   </Typography>
-                  <Chip 
-                    label={submission.educationInfo.graduation.degree} 
-                    size="small" 
-                    color="secondary" 
+                  <Chip
+                    label={submission.educationInfo.graduation.degree}
+                    size="small"
+                    color="secondary"
                     variant="outlined"
                   />
                 </Grid>
                 <Grid size={{ xs: 12, md: 6 }}>
-                  <Typography variant="caption" color="text.secondary" display="block">
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    display="block"
+                  >
                     Major/Specialization
                   </Typography>
                   <Typography variant="body1" fontWeight={500}>
@@ -387,7 +461,11 @@ const ViewSubmission = () => {
             <CardContent>
               <Grid container spacing={3} mb={3}>
                 <Grid size={{ xs: 12, md: 3 }}>
-                  <Typography variant="caption" color="text.secondary" display="block">
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    display="block"
+                  >
                     Total Experience
                   </Typography>
                   <Typography variant="body1" fontWeight={500}>
@@ -395,7 +473,11 @@ const ViewSubmission = () => {
                   </Typography>
                 </Grid>
                 <Grid size={{ xs: 12, md: 3 }}>
-                  <Typography variant="caption" color="text.secondary" display="block">
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    display="block"
+                  >
                     Current CTC
                   </Typography>
                   <Typography variant="body1" fontWeight={500}>
@@ -403,7 +485,11 @@ const ViewSubmission = () => {
                   </Typography>
                 </Grid>
                 <Grid size={{ xs: 12, md: 3 }}>
-                  <Typography variant="caption" color="text.secondary" display="block">
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    display="block"
+                  >
                     Expected CTC
                   </Typography>
                   <Typography variant="body1" fontWeight={500}>
@@ -411,7 +497,11 @@ const ViewSubmission = () => {
                   </Typography>
                 </Grid>
                 <Grid size={{ xs: 12, md: 3 }}>
-                  <Typography variant="caption" color="text.secondary" display="block">
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    display="block"
+                  >
                     Available From
                   </Typography>
                   <Typography variant="body1" fontWeight={500}>
@@ -427,10 +517,23 @@ const ViewSubmission = () => {
                     Job/Internship Details
                   </Typography>
                   {submission.workExperience.jobs.map((job, index) => (
-                    <Card key={job.id} variant="outlined" className={styles.jobCard}>
+                    <Card
+                      key={job.id}
+                      variant="outlined"
+                      className={styles.jobCard}
+                    >
                       <CardContent>
-                        <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-                          <Typography variant="subtitle1" fontWeight={600} color="primary">
+                        <Box
+                          display="flex"
+                          justifyContent="space-between"
+                          alignItems="center"
+                          mb={2}
+                        >
+                          <Typography
+                            variant="subtitle1"
+                            fontWeight={600}
+                            color="primary"
+                          >
                             Job #{index + 1}
                           </Typography>
                           <Chip
@@ -442,7 +545,11 @@ const ViewSubmission = () => {
                         </Box>
                         <Grid container spacing={2}>
                           <Grid size={{ xs: 12, md: 6 }}>
-                            <Typography variant="caption" color="text.secondary" display="block">
+                            <Typography
+                              variant="caption"
+                              color="text.secondary"
+                              display="block"
+                            >
                               Designation
                             </Typography>
                             <Typography variant="body1" fontWeight={500}>
@@ -450,15 +557,24 @@ const ViewSubmission = () => {
                             </Typography>
                           </Grid>
                           <Grid size={{ xs: 12, md: 6 }}>
-                            <Typography variant="caption" color="text.secondary" display="block">
+                            <Typography
+                              variant="caption"
+                              color="text.secondary"
+                              display="block"
+                            >
                               Duration
                             </Typography>
                             <Typography variant="body1" fontWeight={500}>
-                              {formatDate(job.startDate)} - {formatDate(job.endDate)}
+                              {formatDate(job.startDate)} -{" "}
+                              {formatDate(job.endDate)}
                             </Typography>
                           </Grid>
                           <Grid size={{ xs: 12 }}>
-                            <Typography variant="caption" color="text.secondary" display="block">
+                            <Typography
+                              variant="caption"
+                              color="text.secondary"
+                              display="block"
+                            >
                               Description
                             </Typography>
                             <Typography variant="body1">
@@ -478,7 +594,7 @@ const ViewSubmission = () => {
                   <Typography variant="subtitle1" fontWeight={600} gutterBottom>
                     Skills
                   </Typography>
-                  <ul style={{ paddingLeft: '20px' }}>
+                  <ul style={{ paddingLeft: "20px" }}>
                     {submission.workExperience.skills.map((skill, index) => (
                       <li key={index}>{skill}</li>
                     ))}
@@ -489,7 +605,10 @@ const ViewSubmission = () => {
           </Card>
         </Box>
 
-        <Box className={styles.actions} sx={{ mt: 4, justifyContent: 'center' }}>
+        <Box
+          className={styles.actions}
+          sx={{ mt: 4, justifyContent: "center" }}
+        >
           <Button
             variant="outlined"
             startIcon={<ArrowBackIcon />}

@@ -1,7 +1,10 @@
-import { Box, TextField, Tooltip } from '@mui/material';
-import type { TextFieldProps } from '@mui/material/TextField';
+import { Box, TextField, Tooltip } from "@mui/material";
+import type { TextFieldProps } from "@mui/material/TextField";
 
-interface InputFieldProps extends Omit<TextFieldProps, 'error' | 'helperText' | 'onChange' | 'onBlur'> {
+interface InputFieldProps extends Omit<
+  TextFieldProps,
+  "error" | "helperText" | "onChange" | "onBlur"
+> {
   label: string;
   value: string;
   error?: string;
@@ -31,7 +34,7 @@ const InputField = ({
   validationPattern,
   customValidation,
   immediateValidation,
-  type = 'text',
+  type = "text",
   ...props
 }: InputFieldProps) => {
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -55,7 +58,7 @@ const InputField = ({
         validationError = customValidation(newValue);
       }
 
-      if (validationError || (!required && newValue === '')) {
+      if (validationError || (!required && newValue === "")) {
         if (onBlur) onBlur();
       }
     }
@@ -69,8 +72,8 @@ const InputField = ({
   };
 
   const getFieldColor = () => {
-    if (error) return 'error';
-    if (isSuccess) return 'success';
+    if (error) return "error";
+    if (isSuccess) return "success";
     return undefined;
   };
 
@@ -112,4 +115,3 @@ const InputField = ({
 };
 
 export default InputField;
-

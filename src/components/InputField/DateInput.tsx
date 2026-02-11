@@ -1,8 +1,8 @@
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import dayjs, { Dayjs } from 'dayjs';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs, { Dayjs } from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 
 dayjs.extend(customParseFormat);
 
@@ -23,19 +23,16 @@ interface DateInputProps {
 }
 
 const parseDate = (dateString: string): Dayjs | null => {
-  if (!dateString || dateString.trim() === '') return null;
+  if (!dateString || dateString.trim() === "") return null;
 
-  // Try DD/MM/YYYY format first
-  if (dayjs(dateString, 'DD/MM/YYYY', true).isValid()) {
-    return dayjs(dateString, 'DD/MM/YYYY');
+  if (dayjs(dateString, "DD/MM/YYYY", true).isValid()) {
+    return dayjs(dateString, "DD/MM/YYYY");
   }
 
-  // Try YYYY-MM-DD format
-  if (dayjs(dateString, 'YYYY-MM-DD', true).isValid()) {
-    return dayjs(dateString, 'YYYY-MM-DD');
+  if (dayjs(dateString, "YYYY-MM-DD", true).isValid()) {
+    return dayjs(dateString, "YYYY-MM-DD");
   }
 
-  // Try other common formats or fallback to dayjs parsing
   const parsed = dayjs(dateString);
   return parsed.isValid() ? parsed : null;
 };
@@ -48,7 +45,7 @@ const DateInput = ({
   required = false,
   onChange,
   onBlur,
-  format = 'DD/MM/YYYY',
+  format = "DD/MM/YYYY",
   disableFuture = false,
   disablePast = false,
   minDate,
@@ -59,7 +56,7 @@ const DateInput = ({
   const parsedValue = parseDate(value);
 
   const handleDateChange = (date: Dayjs | null) => {
-    const formattedDate = date ? date.format(format) : '';
+    const formattedDate = date ? date.format(format) : "";
     if (onChange) {
       onChange(formattedDate);
     }
@@ -72,8 +69,8 @@ const DateInput = ({
   };
 
   const getFieldColor = () => {
-    if (error) return 'error';
-    if (success) return 'success';
+    if (error) return "error";
+    if (success) return "success";
     return undefined;
   };
 

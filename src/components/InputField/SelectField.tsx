@@ -1,4 +1,4 @@
-import { Box, Autocomplete, TextField, Tooltip } from '@mui/material';
+import { Box, Autocomplete, TextField, Tooltip } from "@mui/material";
 
 interface SelectFieldProps {
   label: string;
@@ -31,7 +31,8 @@ const SelectField = ({
   validateOnChange = true,
   customValidation,
 }: SelectFieldProps) => {
-  const selectedOption = options.find(opt => opt.value === value || opt.label === value) || null;
+  const selectedOption =
+    options.find((opt) => opt.value === value || opt.label === value) || null;
 
   const isSuccess = success && !error;
 
@@ -41,13 +42,16 @@ const SelectField = ({
   };
 
   const getFieldColor = () => {
-    if (error) return 'error';
-    if (isSuccess) return 'success';
+    if (error) return "error";
+    if (isSuccess) return "success";
     return undefined;
   };
 
-  const handleChange = (_: React.SyntheticEvent, newValue: { label: string; value?: string } | null) => {
-    const selectedValue = newValue?.value || newValue?.label || '';
+  const handleChange = (
+    _: React.SyntheticEvent,
+    newValue: { label: string; value?: string } | null,
+  ) => {
+    const selectedValue = newValue?.value || newValue?.label || "";
     onChange(selectedValue);
 
     if (validateOnChange) {
@@ -57,8 +61,12 @@ const SelectField = ({
     }
   };
 
-  const handleInputChange = (_: React.SyntheticEvent, newValue: string, reason: string) => {
-    if (reason === 'input' && validateOnChange) {
+  const handleInputChange = (
+    _: React.SyntheticEvent,
+    newValue: string,
+    reason: string,
+  ) => {
+    if (reason === "input" && validateOnChange) {
       if (customValidation) {
         customValidation(newValue);
       }
@@ -111,4 +119,3 @@ const SelectField = ({
 };
 
 export default SelectField;
-

@@ -162,6 +162,10 @@ export const validateJobEntry = (job: JobEntry): JobEntryErrors => {
     errors.designation = "Designation is required";
   }
 
+  if (!job.organization.trim()) {
+    errors.organization = "Organization is required";
+  }
+
   if (!job.type) {
     errors.type = "Job type is required";
   }

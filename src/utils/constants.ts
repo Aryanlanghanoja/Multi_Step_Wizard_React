@@ -57,7 +57,6 @@ export const generateYearOptions = (birthYear?: string): string[] => {
     return YEAR_OPTIONS;
   }
 
-  // Start from birth year + 10 (typical age for 10th standard)
   const startYear = birth;
   const endYear = currentYear + 30;
   const length = Math.max(1, endYear - startYear + 1);
