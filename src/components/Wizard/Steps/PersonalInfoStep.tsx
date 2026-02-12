@@ -53,7 +53,7 @@ const PersonalInfoStep = ({
   // };
 
   return (
-    <Box sx={{ mt: 2 }}>
+    <Box sx={{ width: "100%" }}>
       <Grid container spacing={3}>
         <Grid size={{ xs: 12, md: 4 }}>
           <InputField
@@ -64,8 +64,6 @@ const PersonalInfoStep = ({
             error={errors.firstName}
             success={isSuccess("firstName")}
             required
-            tooltip="Enter your first name (alphabets only)"
-            validateOnChange
             immediateValidation={validateName}
           />
         </Grid>
@@ -78,8 +76,6 @@ const PersonalInfoStep = ({
             onBlur={() => onBlur("middleName")}
             error={errors.middleName}
             success={isSuccess("middleName")}
-            tooltip="Enter your middle name (optional)"
-            validateOnChange
             immediateValidation={validateName}
           />
         </Grid>
@@ -93,8 +89,6 @@ const PersonalInfoStep = ({
             error={errors.lastName}
             success={isSuccess("lastName")}
             required
-            tooltip="Enter your last name (alphabets only)"
-            validateOnChange
             immediateValidation={validateName}
           />
         </Grid>
@@ -112,7 +106,6 @@ const PersonalInfoStep = ({
             success={isSuccess("countryCode")}
             required
             onBlur={() => onBlur("countryCode")}
-            validateOnChange
           />
         </Grid>
 
@@ -125,8 +118,6 @@ const PersonalInfoStep = ({
             error={errors.phoneNumber}
             success={isSuccess("phoneNumber")}
             required
-            tooltip="Enter phone number (digits only, 7-15 characters)"
-            validateOnChange
             immediateValidation={validatePhoneNumber}
             slotProps={{
               input: {
@@ -150,8 +141,6 @@ const PersonalInfoStep = ({
             error={errors.email}
             success={isSuccess("email")}
             required
-            tooltip="Enter a valid email address"
-            validateOnChange
             immediateValidation={validateEmail}
           />
         </Grid>

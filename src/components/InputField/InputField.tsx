@@ -1,4 +1,4 @@
-import { Box, TextField, Tooltip } from "@mui/material";
+import { TextField } from "@mui/material";
 import type { TextFieldProps } from "@mui/material/TextField";
 
 interface InputFieldProps extends Omit<
@@ -11,10 +11,8 @@ interface InputFieldProps extends Omit<
   helperText?: string;
   success?: boolean;
   required?: boolean;
-  tooltip?: string;
   onChange?: (value: string) => void;
   onBlur?: () => void;
-  validateOnChange?: boolean;
   validationPattern?: RegExp;
   customValidation?: (value: string) => string | undefined;
   immediateValidation?: (value: string) => string | undefined;
@@ -27,10 +25,8 @@ const InputField = ({
   helperText,
   success = false,
   required = false,
-  tooltip,
   onChange,
   onBlur,
-  validateOnChange = false,
   validationPattern,
   customValidation,
   immediateValidation,
@@ -43,25 +39,26 @@ const InputField = ({
     if (onChange) {
       onChange(newValue);
     }
+  };
 
+  const handleBlur = () => {
     if (immediateValidation) {
-      immediateValidation(newValue);
-      if (onBlur) onBlur();
-    }
-
-    if (validateOnChange && !immediateValidation) {
+      immediateValidation(value);
+    } else {
       let validationError: string | undefined;
 
-      if (validationPattern && !validationPattern.test(newValue)) {
+      if (validationPattern && !validationPattern.test(value)) {
         validationError = `Invalid ${label.toLowerCase()} format`;
       } else if (customValidation) {
-        validationError = customValidation(newValue);
+        validationError = customValidation(value);
       }
 
-      if (validationError || (!required && newValue === "")) {
-        if (onBlur) onBlur();
+      if (validationError || (!required && value === "")) {
+        // Validation error, but since we're on blur, just call onBlur if provided
       }
     }
+
+    if (onBlur) onBlur();
   };
 
   const isSuccess = success && !error;
@@ -77,31 +74,13 @@ const InputField = ({
     return undefined;
   };
 
-  const InputWrapper = tooltip ? (
-    <Tooltip title={tooltip} arrow placement="top">
-      <Box display="inline-flex" width="100%">
-        <TextField
-          fullWidth
-          label={label}
-          value={value}
-          onChange={handleInput}
-          onBlur={onBlur}
-          error={!!error}
-          helperText={getHelperText()}
-          color={getFieldColor()}
-          required={required}
-          type={type}
-          {...props}
-        />
-      </Box>
-    </Tooltip>
-  ) : (
+  return (
     <TextField
       fullWidth
       label={label}
       value={value}
       onChange={handleInput}
-      onBlur={onBlur}
+      onBlur={handleBlur}
       error={!!error}
       helperText={getHelperText()}
       color={getFieldColor()}
@@ -110,8 +89,6 @@ const InputField = ({
       {...props}
     />
   );
-
-  return InputWrapper;
 };
 
 export default InputField;

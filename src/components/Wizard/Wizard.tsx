@@ -177,7 +177,7 @@ const Wizard = () => {
         severity: "success",
       });
       setTimeout(() => {
-        navigate("/data");
+        navigate("/");
       }, 500);
     } catch (error) {
       console.log(error);
@@ -567,8 +567,21 @@ const Wizard = () => {
   };
 
   return (
-    <Box className={styles.wizard}>
-      <Paper elevation={3} className={styles.wizardContainer}>
+    <Box
+      className={styles.wizard}
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "100vh",
+        p: 2,
+      }}
+    >
+      <Paper
+        elevation={3}
+        className={styles.wizardContainer}
+        sx={{ maxWidth: 800, width: "100%" }}
+      >
         <Typography
           variant="h4"
           component="h1"

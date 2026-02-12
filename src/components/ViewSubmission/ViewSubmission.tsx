@@ -90,7 +90,7 @@ const ViewSubmission = () => {
   };
 
   const handleBack = () => {
-    navigate("/data");
+    navigate("/");
   };
 
   const formatDate = (dateString: string): string => {
@@ -102,7 +102,16 @@ const ViewSubmission = () => {
 
   if (loading) {
     return (
-      <Box className={styles.viewSubmission}>
+      <Box
+        className={styles.viewSubmission}
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "100vh",
+          p: 2,
+        }}
+      >
         <Box
           display="flex"
           justifyContent="center"
@@ -117,8 +126,20 @@ const ViewSubmission = () => {
 
   if (error || !submission) {
     return (
-      <Box className={styles.viewSubmission}>
-        <Paper className={styles.container}>
+      <Box
+        className={styles.viewSubmission}
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "100vh",
+          p: 2,
+        }}
+      >
+        <Paper
+          className={styles.container}
+          sx={{ maxWidth: 800, width: "100%" }}
+        >
           <Alert severity="error" sx={{ mb: 2 }}>
             {error || "Submission not found"}
           </Alert>
@@ -135,8 +156,21 @@ const ViewSubmission = () => {
   }
 
   return (
-    <Box className={styles.viewSubmission}>
-      <Paper elevation={3} className={styles.container}>
+    <Box
+      className={styles.viewSubmission}
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "flex-start",
+        minHeight: "100vh",
+        p: 2,
+      }}
+    >
+      <Paper
+        elevation={3}
+        className={styles.container}
+        sx={{ maxWidth: 1000, width: "100%" }}
+      >
         <Box className={styles.header}>
           <Box>
             <Typography variant="h4" component="h1" gutterBottom>

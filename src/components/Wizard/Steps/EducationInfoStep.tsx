@@ -58,41 +58,41 @@ const EducationInfoStep = ({
   };
 
   return (
-    <Box sx={{ mt: 2 }}>
-      <Typography variant="h6" gutterBottom>
-        10th Standard Details
-      </Typography>
-      <Grid container spacing={3}>
-        <Grid size={{ xs: 12, md: 6 }}>
-          <SelectField
-            label="Pass Year"
-            options={generateYearOptions(birthYear).map((opt) => ({
-              label: opt,
-              value: opt,
-            }))}
-            value={data.tenth.passYear || null}
-            onChange={(value) => onChange("tenth", "passYear", value)}
-            error={errors.tenth?.passYear}
-            success={isSuccess("tenth", "passYear")}
-            required
-            onBlur={() => onBlur("tenth", "passYear")}
-            validateOnChange
-          />
+    <Box sx={{ width: "100%" }}>
+      <Box sx={{ mb: 4 }}>
+        <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
+          10th Standard Details
+        </Typography>
+        <Grid container spacing={3}>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <SelectField
+              label="Pass Year"
+              options={generateYearOptions(birthYear).map((opt) => ({
+                label: opt,
+                value: opt,
+              }))}
+              value={data.tenth.passYear || null}
+              onChange={(value) => onChange("tenth", "passYear", value)}
+              error={errors.tenth?.passYear}
+              success={isSuccess("tenth", "passYear")}
+              required
+              onBlur={() => onBlur("tenth", "passYear")}
+            />
+          </Grid>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <SelectField
+              label="Board"
+              options={BOARD_OPTIONS.map((opt) => ({ label: opt, value: opt }))}
+              value={data.tenth.board || null}
+              onChange={(value) => onChange("tenth", "board", value)}
+              error={errors.tenth?.board}
+              success={isSuccess("tenth", "board")}
+              required
+              onBlur={() => onBlur("tenth", "board")}
+            />
+          </Grid>
         </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
-          <SelectField
-            label="Board"
-            options={BOARD_OPTIONS.map((opt) => ({ label: opt, value: opt }))}
-            value={data.tenth.board || null}
-            onChange={(value) => onChange("tenth", "board", value)}
-            error={errors.tenth?.board}
-            success={isSuccess("tenth", "board")}
-            required
-            onBlur={() => onBlur("tenth", "board")}
-            validateOnChange
-          />
-        </Grid>
-      </Grid>
+      </Box>
 
       <Divider sx={{ my: 3 }} />
 
@@ -119,8 +119,8 @@ const EducationInfoStep = ({
       </FormControl>
 
       {data.educationType === "12th" && (
-        <>
-          <Typography variant="h6" gutterBottom>
+        <Box sx={{ mb: 4 }}>
+          <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
             12th Standard Details
           </Typography>
           <Grid container spacing={3}>
@@ -137,7 +137,6 @@ const EducationInfoStep = ({
                 success={isSuccess("twelfth", "passYear")}
                 required
                 onBlur={() => onBlur("twelfth", "passYear")}
-                validateOnChange
               />
             </Grid>
             <Grid size={{ xs: 12, md: 6 }}>
@@ -153,11 +152,10 @@ const EducationInfoStep = ({
                 success={isSuccess("twelfth", "board")}
                 required
                 onBlur={() => onBlur("twelfth", "board")}
-                validateOnChange
               />
             </Grid>
           </Grid>
-        </>
+        </Box>
       )}
 
       {data.educationType === "Diploma" && (
@@ -179,7 +177,6 @@ const EducationInfoStep = ({
                 success={isSuccess("diploma", "passYear")}
                 required
                 onBlur={() => onBlur("diploma", "passYear")}
-                validateOnChange
               />
             </Grid>
             <Grid size={{ xs: 12, md: 4 }}>
@@ -191,7 +188,6 @@ const EducationInfoStep = ({
                 success={isSuccess("diploma", "organization")}
                 required
                 onBlur={() => onBlur("diploma", "organization")}
-                validateOnChange
                 immediateValidation={validateRequired}
               />
             </Grid>
@@ -204,7 +200,6 @@ const EducationInfoStep = ({
                 success={isSuccess("diploma", "major")}
                 required
                 onBlur={() => onBlur("diploma", "major")}
-                validateOnChange
                 immediateValidation={validateRequired}
               />
             </Grid>
@@ -212,70 +207,71 @@ const EducationInfoStep = ({
         </>
       )}
 
-      <Divider sx={{ my: 3 }} />
-
-      <Typography variant="h6" gutterBottom>
-        Graduation Details
-      </Typography>
-      <Grid container spacing={3}>
-        <Grid size={{ xs: 12, md: 6 }}>
-          <SelectField
-            label="Completion Year"
-            options={generateYearOptions(birthYear).map((opt) => ({
-              label: opt,
-              value: opt,
-            }))}
-            value={data.graduation.completionYear || null}
-            onChange={(value) =>
-              onChange("graduation", "completionYear", value)
-            }
-            error={errors.graduation?.completionYear}
-            success={isSuccess("graduation", "completionYear")}
-            required
-            onBlur={() => onBlur("graduation", "completionYear")}
-            validateOnChange
-          />
+      <Box sx={{ mb: 4 }}>
+        <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
+          Graduation Details
+        </Typography>
+        <Grid container spacing={3}>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <SelectField
+              label="Completion Year"
+              options={generateYearOptions(birthYear).map((opt) => ({
+                label: opt,
+                value: opt,
+              }))}
+              value={data.graduation.completionYear || null}
+              onChange={(value) =>
+                onChange("graduation", "completionYear", value)
+              }
+              error={errors.graduation?.completionYear}
+              success={isSuccess("graduation", "completionYear")}
+              required
+              onBlur={() => onBlur("graduation", "completionYear")}
+            />
+          </Grid>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <InputField
+              label="Organization / University"
+              value={data.graduation.organization}
+              onChange={(value) =>
+                onChange("graduation", "organization", value)
+              }
+              error={errors.graduation?.organization}
+              success={isSuccess("graduation", "organization")}
+              required
+              onBlur={() => onBlur("graduation", "organization")}
+              immediateValidation={validateRequired}
+            />
+          </Grid>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <SelectField
+              label="Degree"
+              options={DEGREE_OPTIONS.map((opt) => ({
+                label: opt,
+                value: opt,
+              }))}
+              value={data.graduation.degree || null}
+              onChange={(value) => onChange("graduation", "degree", value)}
+              error={errors.graduation?.degree}
+              success={isSuccess("graduation", "degree")}
+              required
+              onBlur={() => onBlur("graduation", "degree")}
+            />
+          </Grid>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <InputField
+              label="Major / Specialization"
+              value={data.graduation.major}
+              onChange={(value) => onChange("graduation", "major", value)}
+              error={errors.graduation?.major}
+              success={isSuccess("graduation", "major")}
+              required
+              onBlur={() => onBlur("graduation", "major")}
+              immediateValidation={validateRequired}
+            />
+          </Grid>
         </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
-          <InputField
-            label="Organization / University"
-            value={data.graduation.organization}
-            onChange={(value) => onChange("graduation", "organization", value)}
-            error={errors.graduation?.organization}
-            success={isSuccess("graduation", "organization")}
-            required
-            onBlur={() => onBlur("graduation", "organization")}
-            validateOnChange
-            immediateValidation={validateRequired}
-          />
-        </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
-          <SelectField
-            label="Degree"
-            options={DEGREE_OPTIONS.map((opt) => ({ label: opt, value: opt }))}
-            value={data.graduation.degree || null}
-            onChange={(value) => onChange("graduation", "degree", value)}
-            error={errors.graduation?.degree}
-            success={isSuccess("graduation", "degree")}
-            required
-            onBlur={() => onBlur("graduation", "degree")}
-            validateOnChange
-          />
-        </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
-          <InputField
-            label="Major / Specialization"
-            value={data.graduation.major}
-            onChange={(value) => onChange("graduation", "major", value)}
-            error={errors.graduation?.major}
-            success={isSuccess("graduation", "major")}
-            required
-            onBlur={() => onBlur("graduation", "major")}
-            validateOnChange
-            immediateValidation={validateRequired}
-          />
-        </Grid>
-      </Grid>
+      </Box>
     </Box>
   );
 };

@@ -72,7 +72,7 @@ const EditSubmission = () => {
             message: "Submission not found",
             severity: "error",
           });
-          setTimeout(() => navigate("/data"), 2000);
+          setTimeout(() => navigate("/"), 2000);
         }
       } catch {
         setSnackbar({
@@ -137,7 +137,7 @@ const EditSubmission = () => {
         message: "Form updated successfully!",
         severity: "success",
       });
-      setTimeout(() => navigate("/data"), 2000);
+      setTimeout(() => navigate("/"), 500);
     } catch {
       setSnackbar({
         open: true,
@@ -423,12 +423,20 @@ const EditSubmission = () => {
   };
 
   const handleCancel = () => {
-    navigate("/data");
+    navigate("/");
   };
 
   if (loading) {
     return (
-      <Box className={styles.editSubmission}>
+      <Box
+        className={styles.editSubmission}
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "100vh",
+        }}
+      >
         <Box
           display="flex"
           justifyContent="center"
@@ -443,7 +451,15 @@ const EditSubmission = () => {
 
   if (!formData) {
     return (
-      <Box className={styles.editSubmission}>
+      <Box
+        className={styles.editSubmission}
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "100vh",
+        }}
+      >
         <Paper className={styles.container}>
           <Alert severity="error" sx={{ mb: 2 }}>
             Submission not found
@@ -461,8 +477,21 @@ const EditSubmission = () => {
   }
 
   return (
-    <Box className={styles.editSubmission}>
-      <Paper elevation={3} className={styles.container}>
+    <Box
+      className={styles.editSubmission}
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "flex-start",
+        minHeight: "100vh",
+        p: 2,
+      }}
+    >
+      <Paper
+        elevation={3}
+        className={styles.container}
+        sx={{ maxWidth: 800, width: "100%" }}
+      >
         <Box
           display="flex"
           justifyContent="space-between"
@@ -481,9 +510,9 @@ const EditSubmission = () => {
           </Button>
         </Box>
 
-        <Typography variant="body2" color="text.secondary" gutterBottom>
+        {/* <Typography variant="body2" color="text.secondary" gutterBottom>
           Submission ID: {formData.id}
-        </Typography>
+        </Typography> */}
 
         <Stepper activeStep={activeStep} className={styles.stepper}>
           {STEPS.map((label) => (

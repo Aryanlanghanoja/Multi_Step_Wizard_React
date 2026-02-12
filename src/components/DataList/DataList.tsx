@@ -120,13 +120,26 @@ const DataList = () => {
   };
 
   return (
-    <Box className={styles.dataList}>
-      <Paper elevation={3} className={styles.container}>
+    <Box
+      className={styles.dataList}
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "100vh",
+        p: 2,
+      }}
+    >
+      <Paper
+        elevation={3}
+        className={styles.container}
+        sx={{ maxWidth: 1200, width: "100%" }}
+      >
         <Box className={styles.header}>
           <Typography variant="h4" component="h1" gutterBottom>
             Form Submissions
           </Typography>
-          <Button variant="contained" onClick={() => navigate("/")}>
+          <Button variant="contained" onClick={() => navigate("/form")}>
             Create New Form
           </Button>
         </Box>

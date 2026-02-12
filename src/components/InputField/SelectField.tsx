@@ -1,4 +1,4 @@
-import { Box, Autocomplete, TextField, Tooltip } from "@mui/material";
+import { Autocomplete, TextField } from "@mui/material";
 
 interface SelectFieldProps {
   label: string;
@@ -9,10 +9,8 @@ interface SelectFieldProps {
   helperText?: string;
   success?: boolean;
   required?: boolean;
-  tooltip?: string;
   getOptionLabel?: (option: { label: string; value?: string }) => string;
   onBlur?: () => void;
-  validateOnChange?: boolean;
   customValidation?: (value: string) => string | undefined;
 }
 
@@ -25,10 +23,8 @@ const SelectField = ({
   helperText,
   success = false,
   required = false,
-  tooltip,
   getOptionLabel,
   onBlur,
-  validateOnChange = true,
   customValidation,
 }: SelectFieldProps) => {
   const selectedOption =
@@ -53,53 +49,20 @@ const SelectField = ({
   ) => {
     const selectedValue = newValue?.value || newValue?.label || "";
     onChange(selectedValue);
-
-    if (validateOnChange) {
-      if (customValidation) {
-        customValidation(selectedValue);
-      }
-    }
   };
 
-  const handleInputChange = (
-    _: React.SyntheticEvent,
-    newValue: string,
-    reason: string,
-  ) => {
-    if (reason === "input" && validateOnChange) {
-      if (customValidation) {
-        customValidation(newValue);
-      }
+  const handleBlur = () => {
+    if (customValidation) {
+      customValidation(value || "");
     }
+    if (onBlur) onBlur();
   };
 
-  const FieldWrapper = tooltip ? (
-    <Tooltip title={tooltip} arrow placement="top">
-      <Box display="inline-flex" width="100%">
-        <Autocomplete
-          options={options}
-          value={selectedOption}
-          onChange={handleChange}
-          getOptionLabel={getOptionLabel || ((option) => option.label)}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label={label}
-              error={!!error}
-              helperText={getHelperText()}
-              color={getFieldColor()}
-              required={required}
-            />
-          )}
-        />
-      </Box>
-    </Tooltip>
-  ) : (
+  return (
     <Autocomplete
       options={options}
       value={selectedOption}
       onChange={handleChange}
-      onInputChange={handleInputChange}
       getOptionLabel={getOptionLabel || ((option) => option.label)}
       renderInput={(params) => (
         <TextField
@@ -109,13 +72,11 @@ const SelectField = ({
           helperText={getHelperText()}
           color={getFieldColor()}
           required={required}
-          onBlur={onBlur}
+          onBlur={handleBlur}
         />
       )}
     />
   );
-
-  return FieldWrapper;
 };
 
 export default SelectField;
