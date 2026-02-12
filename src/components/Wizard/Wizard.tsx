@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
@@ -117,7 +117,10 @@ const initialTouchedState: TouchedState = {
 
 const Wizard = () => {
   const [activeStep, setActiveStep] = useState(0);
-  const [formData, setFormData] = useState<FormData>(initialFormData);
+  const [formData, setFormData] = useState<FormData>(() => {
+    const saved = localStorage.getItem("wizardFormData");
+    return saved ? JSON.parse(saved) : initialFormData;
+  });
   const [errors, setErrors] = useState<FormErrors>({
     personalInfo: {},
     educationInfo: {},
@@ -130,6 +133,10 @@ const Wizard = () => {
     severity: "success" as "success" | "error",
   });
   const navigate = useNavigate();
+
+  useEffect(() => {
+    localStorage.setItem("wizardFormData", JSON.stringify(formData));
+  }, [formData]);
 
   const handleNext = () => {
     const stepErrors = validateStep(activeStep, formData);
@@ -171,6 +178,7 @@ const Wizard = () => {
     try {
       await createSubmission(formData);
       console.log(formData);
+      localStorage.removeItem("wizardFormData");
       setSnackbar({
         open: true,
         message: "Form submitted successfully!",

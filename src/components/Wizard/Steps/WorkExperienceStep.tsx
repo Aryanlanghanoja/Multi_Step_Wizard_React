@@ -164,7 +164,6 @@ const WorkExperienceStep = ({
         </Grid>
       </Box>
 
-      {/* Job Details */}
       <Box sx={{ mb: 4 }}>
         <Box
           sx={{

@@ -6,6 +6,7 @@ import DataList from "./components/DataList/DataList";
 import ViewSubmission from "./components/ViewSubmission/ViewSubmission";
 import EditSubmission from "./components/EditSubmission/EditSubmission";
 import Layout from "./components/Layout/Layout";
+import NotFound from "./components/NotFound/NotFound";
 import "./App.module.css";
 
 const theme = createTheme({
@@ -33,6 +34,7 @@ function App() {
             <Route path="/form" element={<Wizard />} />
             <Route path="/view/:id" element={<ViewSubmission />} />
             <Route path="/edit/:id" element={<EditSubmission />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </Layout>
       </Router>
